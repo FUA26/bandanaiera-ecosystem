@@ -29,10 +29,10 @@ cp .env.docker.example .env
 # Edit .env if needed (defaults work for local development)
 
 # 4. Set up database
-pnpm --filter web db:push
+pnpm --filter support db:push
 
 # 5. Seed database (optional, creates admin user)
-pnpm --filter web db:seed
+pnpm --filter support db:seed
 
 # 6. Start development server
 pnpm dev
@@ -169,13 +169,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ```bash
 # Push schema to database (development, no migration)
-pnpm --filter web db:push
+pnpm --filter support db:push
 
 # Create and apply migration (production recommended)
-pnpm --filter web db:migrate
+pnpm --filter support db:migrate
 
 # Seed database with initial data
-pnpm --filter web db:seed
+pnpm --filter support db:seed
 ```
 
 ### What Gets Seeded?
@@ -200,7 +200,7 @@ Key models:
 
 ```bash
 # Open Prisma Studio
-pnpm --filter web db:studio
+pnpm --filter support db:studio
 ```
 
 Browse to `http://localhost:5555` to view and edit your database.
@@ -209,13 +209,13 @@ Browse to `http://localhost:5555` to view and edit your database.
 
 ```bash
 # Reset database (⚠️ deletes all data)
-pnpm --filter web db:push --force-reset
+pnpm --filter support db:push --force-reset
 
 # Format Prisma schema
-pnpm --filter web db:format
+pnpm --filter support db:format
 
 # Generate Prisma Client (after schema changes)
-pnpm --filter web db:generate
+pnpm --filter support db:generate
 ```
 
 ---
@@ -238,8 +238,8 @@ This starts:
 ### Development Mode (Web App Only)
 
 ```bash
-# Start only the web app
-pnpm --filter web dev
+# Start only the support app
+pnpm --filter support dev
 ```
 
 ### Production Build
@@ -248,11 +248,11 @@ pnpm --filter web dev
 # Build all packages
 pnpm build
 
-# Build only web app
-pnpm --filter web build
+# Build only support app
+pnpm --filter support build
 
 # Start production server
-pnpm --filter web start
+pnpm --filter support start
 ```
 
 ### Code Quality Checks
@@ -457,18 +457,18 @@ Error: P3006 Migration failed
 1. **Reset database (development only):**
 
    ```bash
-   pnpm --filter web db:push --force-reset
-   pnpm --filter web db:seed
+   pnpm --filter support db:push --force-reset
+   pnpm --filter support db:seed
    ```
 
 2. **Resolve migration conflict:**
 
    ```bash
    # Mark migration as applied (careful!)
-   pnpm --filter web db:resolve --applied <migration-name>
+   pnpm --filter support db:resolve --applied <migration-name>
 
    # Or mark as rolled back
-   pnpm --filter web db:resolve --rolled-back <migration-name>
+   pnpm --filter support db:resolve --rolled-back <migration-name>
    ```
 
 #### Prisma Client Not Generated
@@ -482,7 +482,7 @@ Error: @prisma/client did not initialize yet
 **Solution:**
 
 ```bash
-pnpm --filter web db:generate
+pnpm --filter support db:generate
 ```
 
 ---
@@ -517,7 +517,7 @@ Module not found: Can't resolve '@workspace/ui'
 3. **Check tsconfig paths:**
    ```bash
    # Verify paths are configured correctly
-   cat apps/web/tsconfig.json | grep paths
+   cat apps/support/tsconfig.json | grep paths
    ```
 
 #### TypeScript Errors After Changes
@@ -541,7 +541,7 @@ Type error: Property 'x' does not exist on type 'Y'
 
 3. **Clear Next.js cache:**
    ```bash
-   rm -rf .next apps/web/.next
+   rm -rf .next apps/support/.next
    ```
 
 #### Port 3000 Already in Use
@@ -675,11 +675,11 @@ pnpm dev --force
 ### Package Management
 
 ```bash
-# Add dependency to web app
-pnpm --filter web add <package>
+# Add dependency to support app
+pnpm --filter support add <package>
 
 # Add dev dependency
-pnpm --filter web add -D <package>
+pnpm --filter support add -D <package>
 
 # Add to workspace root
 pnpm add -w -D <package>
@@ -726,7 +726,7 @@ docker exec zilpo-postgres pg_dump -U zilpo zilpo_admin > backup.sql
 docker exec -i zilpo-postgres psql -U zilpo zilpo_admin < backup.sql
 
 # Drop all tables
-pnpm --filter web db:push --force-reset
+pnpm --filter support db:push --force-reset
 ```
 
 ---

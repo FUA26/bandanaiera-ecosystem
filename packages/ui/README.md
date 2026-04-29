@@ -105,7 +105,7 @@ The library uses CSS variables for theming with light/dark mode support via `nex
 Add new components via the shadcn CLI:
 
 ```bash
-pnpm dlx shadcn@latest add <component-name> -c apps/web
+pnpm dlx shadcn@latest add <component-name> -c apps/support
 ```
 
 ## Exports

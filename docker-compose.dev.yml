@@ -5,11 +5,11 @@
 version: "3.8"
 
 services:
-  web:
+  support:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
-    container_name: zilpo-web
+      dockerfile: apps/support/Dockerfile
+    container_name: zilpo-support
     restart: unless-stopped
     ports:
       - "3000:3000"

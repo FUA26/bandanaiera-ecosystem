@@ -21,7 +21,7 @@ A modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monore
 ```
 zilpo-admin/
 ├── apps/
-│   └── web/                    # Main Next.js application
+│   └── support/                # Main Next.js application
 │       ├── app/                # App Router routes
 │       │   ├── (auth)/         # Auth routes (sign-in, sign-up, etc.)
 │       │   ├── (landing)/      # Landing page
@@ -69,10 +69,10 @@ cp .env.example .env
 # Edit .env with your configuration
 
 # Set up database
-pnpm --filter web db:push
+pnpm --filter support db:push
 
 # (Optional) Seed database
-pnpm --filter web db:seed
+pnpm --filter support db:seed
 
 # Start development server
 pnpm dev
@@ -102,18 +102,18 @@ pnpm typecheck        # Type check all packages
 pnpm validate         # Run lint, typecheck, and format:check
 ```
 
-### Web app commands
+### Support app commands
 
 ```bash
-pnpm --filter web dev              # Start Next.js dev server with Turbopack
-pnpm --filter web build            # Production build
-pnpm --filter web start            # Start production server
-pnpm --filter web lint             # Run ESLint
-pnpm --filter web typecheck        # TypeScript type checking
-pnpm --filter web db:push          # Push schema to database
-pnpm --filter web db:migrate       # Run migrations
-pnpm --filter web db:seed          # Seed database
-pnpm --filter web db:studio        # Open Prisma Studio
+pnpm --filter support dev              # Start Next.js dev server with Turbopack
+pnpm --filter support build            # Production build
+pnpm --filter support start            # Start production server
+pnpm --filter support lint             # Run ESLint
+pnpm --filter support typecheck        # TypeScript type checking
+pnpm --filter support db:push          # Push schema to database
+pnpm --filter support db:migrate       # Run migrations
+pnpm --filter support db:seed          # Seed database
+pnpm --filter support db:studio        # Open Prisma Studio
 ```
 
 ## Adding Components
@@ -121,7 +121,7 @@ pnpm --filter web db:studio        # Open Prisma Studio
 Components are managed via shadcn CLI and stored in the shared UI package:
 
 ```bash
-pnpm dlx shadcn@latest add <component-name> -c apps/web
+pnpm dlx shadcn@latest add <component-name> -c apps/support
 ```
 
 Components are installed to `packages/ui/src/components/` and can be imported:
@@ -158,18 +158,18 @@ NextAuth v5 is configured with:
 
 ### Schema
 
-Define your schema in `apps/web/prisma/schema.prisma`.
+Define your schema in `apps/support/prisma/schema.prisma`.
 
 ### Migrations
 
 ```bash
-pnpm --filter web db:migrate
+pnpm --filter support db:migrate
 ```
 
 ### Studio
 
 ```bash
-pnpm --filter web db:studio
+pnpm --filter support db:studio
 ```
 
 ## Code Quality
