@@ -1,0 +1,312 @@
+import { NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { createTicket } from "@/lib/services/ticketing/ticket-service"
+import { integratedTicketSchema } from "@/lib/validations/ticket-validation"
+import { verifyAccessToken } from "@/lib/services/ticketing/integration-service"
+
+/**
+ * Verify API Key and return channel info (deprecated - use JWT tokens)
+ */
+async function verifyApiKey(apiKey: string) {
+  const channel = await prisma.channel.findUnique({
+    where: { apiKey },
+    include: { app: true },
+  })
+
+  if (!channel) {
+    return null
+  }
+
+  if (!channel.isActive || !channel.app.isActive) {
+    return null
+  }
+
+  if (channel.type !== "INTEGRATED_APP") {
+    return null
+  }
+
+  return channel
+}
+
+/**
+ * GET /api/integrated/tickets - List tickets for an external user
+ *
+ * Supports two authentication methods:
+ * 1. JWT Token (recommended): ?token=<jwt_token>
+ * 2. API Key (deprecated): X-API-Key header
+ *
+ * Query params:
+ *   token: <jwt_token> (preferred method)
+ *   externalUserId: <user_id_from_your_app> (only used with API Key)
+ *   email: <user_email> (only used with API Key)
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const token = searchParams.get("token")
+    let channel: any = null
+    let externalUserId: string | null = null
+    let email: string | null = null
+
+    // Method 1: JWT Token (preferred)
+    if (token) {
+      try {
+        const tokenPayload = await verifyAccessToken(token)
+
+        // Accept list_tickets purpose
+        if (
+          tokenPayload.purpose !== "list_tickets" &&
+          tokenPayload.purpose !== "view_ticket" &&
+          tokenPayload.purpose !== "create_ticket"
+        ) {
+          return NextResponse.json(
+            {
+              error: "INVALID_TOKEN_PURPOSE",
+              message: "Token tidak valid untuk melihat daftar tiket",
+            },
+            { status: 401 }
+          )
+        }
+
+        // Get channel info
+        channel = await prisma.channel.findUnique({
+          where: { id: tokenPayload.channelId },
+          include: { app: true },
+        })
+
+        if (!channel || !channel.isActive || !channel.app.isActive) {
+          return NextResponse.json(
+            { error: "CHANNEL_INACTIVE", message: "Channel tidak aktif" },
+            { status: 401 }
+          )
+        }
+
+        // Use identifier from token
+        externalUserId = tokenPayload.externalUserId || null
+        email = tokenPayload.email || null
+      } catch (tokenError: any) {
+        console.error("Token verification error:", tokenError)
+        return NextResponse.json(
+          {
+            error:
+              tokenError.message === "TOKEN_EXPIRED"
+                ? "TOKEN_EXPIRED"
+                : "INVALID_TOKEN",
+            message:
+              tokenError.message === "TOKEN_EXPIRED"
+                ? "Token telah kadaluarsa"
+                : "Token tidak valid",
+          },
+          { status: 401 }
+        )
+      }
+    }
+    // Method 2: API Key (deprecated)
+    else {
+      const apiKey = request.headers.get("X-API-Key")
+      if (!apiKey) {
+        return NextResponse.json(
+          { error: "MISSING_AUTH", message: "Token atau API Key diperlukan" },
+          { status: 401 }
+        )
+      }
+
+      channel = await verifyApiKey(apiKey)
+      if (!channel) {
+        return NextResponse.json(
+          {
+            error: "INVALID_API_KEY",
+            message: "API Key tidak valid atau channel tidak aktif",
+          },
+          { status: 401 }
+        )
+      }
+
+      // Get query params for API Key method
+      externalUserId = searchParams.get("externalUserId")
+      email = searchParams.get("email")
+
+      // Require exactly one of externalUserId or email
+      if (!externalUserId && !email) {
+        return NextResponse.json(
+          {
+            error: "MISSING_IDENTIFIER",
+            message: "externalUserId atau email diperlukan",
+          },
+          { status: 400 }
+        )
+      }
+
+      if (externalUserId && email) {
+        return NextResponse.json(
+          {
+            error: "DUPLICATE_IDENTIFIER",
+            message: "Gunakan hanya satu: externalUserId atau email",
+          },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Build where clause based on filter type
+    const whereClause: any = {
+      appId: channel.appId,
+      channelId: channel.id,
+    }
+
+    if (externalUserId) {
+      whereClause.externalUserId = externalUserId
+    } else if (email) {
+      whereClause.guestEmail = email
+    } else {
+      // If token has neither, return empty
+      return NextResponse.json({
+        tickets: [],
+        message: "Token tidak memiliki identifier user",
+      })
+    }
+
+    console.log(
+      "[DEBUG] Fetching tickets with whereClause:",
+      JSON.stringify(whereClause)
+    )
+
+    // Get tickets for this external user or email
+    const tickets = await prisma.ticket.findMany({
+      where: whereClause,
+      orderBy: { createdAt: "desc" },
+      include: {
+        messages: {
+          where: { isInternal: false },
+          orderBy: { createdAt: "asc" },
+          take: 1, // Only first message for preview
+        },
+        _count: {
+          select: {
+            messages: {
+              where: { isInternal: false },
+            },
+          },
+        },
+      },
+    })
+
+    console.log("[DEBUG] Found tickets:", tickets.length)
+
+    return NextResponse.json({
+      tickets: tickets.map((t) => ({
+        id: t.id,
+        ticketNumber: t.ticketNumber,
+        subject: t.subject,
+        description: t.description,
+        status: t.status,
+        priority: t.priority,
+        createdAt: t.createdAt,
+        updatedAt: t.updatedAt,
+        resolvedAt: t.resolvedAt,
+        closedAt: t.closedAt,
+        messageCount: t._count.messages,
+        lastMessage: t.messages[0]?.message,
+      })),
+    })
+  } catch (error) {
+    console.error("Error fetching integrated tickets:", error)
+    return NextResponse.json(
+      {
+        error: "INTERNAL_ERROR",
+        message:
+          error instanceof Error ? error.message : "Gagal mengambil data tiket",
+      },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * POST /api/integrated/tickets - Create ticket from external app
+ *
+ * Headers:
+ *   X-API-Key: <your_channel_api_key>
+ *
+ * Body:
+ *   {
+ *     "externalUserId": "user_123",      // Your user's ID
+ *     "externalUserName": "John Doe",    // Optional: user's name
+ *     "externalUserEmail": "john@ex.com", // Optional: user's email
+ *     "subject": "Help needed",
+ *     "message": "I need help with...",
+ *     "priority": "NORMAL" // Optional: LOW, NORMAL, HIGH, URGENT
+ *   }
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Verify API Key
+    const apiKey = request.headers.get("X-API-Key")
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "Missing API key. Use X-API-Key header." },
+        { status: 401 }
+      )
+    }
+
+    const channel = await verifyApiKey(apiKey)
+    if (!channel) {
+      return NextResponse.json(
+        { error: "Invalid API key or inactive channel" },
+        { status: 401 }
+      )
+    }
+
+    const body = await request.json()
+
+    // Validate input
+    const validated = integratedTicketSchema.parse(body)
+
+    // Create ticket with external user info
+    const ticket = await createTicket({
+      appId: channel.appId,
+      channelId: channel.id,
+      subject: validated.subject,
+      message: validated.message,
+      priority: validated.priority,
+      guestInfo: {
+        email: validated.externalUserEmail || "guest@example.com",
+        name: validated.externalUserName,
+      },
+    })
+
+    // Update ticket with externalUserId
+    await prisma.ticket.update({
+      where: { id: ticket.id },
+      data: { externalUserId: validated.externalUserId },
+    })
+
+    return NextResponse.json(
+      {
+        id: ticket.id,
+        ticketNumber: ticket.ticketNumber,
+        status: ticket.status,
+        subject: ticket.subject,
+        createdAt: ticket.createdAt,
+      },
+      { status: 201 }
+    )
+  } catch (error) {
+    console.error("Error creating integrated ticket:", error)
+
+    if (error instanceof Error && error.message.includes("ZodError")) {
+      return NextResponse.json(
+        { error: "Invalid input", details: error.message },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to create ticket",
+      },
+      { status: 500 }
+    )
+  }
+}

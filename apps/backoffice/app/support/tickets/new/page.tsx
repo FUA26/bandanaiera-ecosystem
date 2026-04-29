@@ -1,0 +1,486 @@
+"use client"
+
+import { useState, Suspense, useEffect } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import { Button } from "@workspace/ui/components/button"
+import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
+import { Textarea } from "@workspace/ui/components/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+import { Alert, AlertDescription } from "@workspace/ui/components/alert"
+import {
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  MessageSquare,
+  Mail,
+  User,
+  Phone,
+} from "lucide-react"
+import {
+  AttachmentUpload,
+  type AttachmentFile,
+} from "@/components/ticketing/attachment-upload"
+
+interface TokenData {
+  email?: string
+  externalUserId?: string
+  channelSlug: string
+  appId: string
+}
+
+function TicketForm() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const appSlug = searchParams.get("app")
+  const channelParam = searchParams.get("channel")
+  const embed = searchParams.get("embed") === "true"
+  const tokenParam = searchParams.get("token")
+
+  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [appInfo, setAppInfo] = useState<any>(null)
+  const [appLoading, setAppLoading] = useState(true)
+  const [tokenValid, setTokenValid] = useState(false)
+  const [tokenData, setTokenData] = useState<TokenData | null>(null)
+  const [createdTicketId, setCreatedTicketId] = useState<string | null>(null)
+
+  // Form state
+  const [subject, setSubject] = useState("")
+  const [message, setMessage] = useState("")
+  const [priority, setPriority] = useState("NORMAL")
+  const [guestName, setGuestName] = useState("")
+  const [guestEmail, setGuestEmail] = useState("")
+  const [guestPhone, setGuestPhone] = useState("")
+  const [attachments, setAttachments] = useState<AttachmentFile[]>([])
+
+  // Validate token and pre-fill user info
+  useEffect(() => {
+    const validateTokenAndGetInfo = async () => {
+      if (!tokenParam) return
+
+      try {
+        const res = await fetch("/api/integrated/validate-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: tokenParam }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          setTokenData(data)
+          setTokenValid(true)
+
+          // Pre-fill based on token type
+          if (data.email) {
+            setGuestEmail(data.email)
+          }
+          // For externalUserId, we don't pre-fill any guest info
+        } else {
+          const data = await res.json()
+          setError(data.message || "Invalid or expired access token")
+        }
+      } catch (err) {
+        console.error("Token validation error:", err)
+        setError("Failed to validate access token")
+      }
+    }
+
+    validateTokenAndGetInfo()
+  }, [tokenParam])
+
+  // Fetch app info
+  useEffect(() => {
+    if (appSlug) {
+      fetch(`/api/apps/by-slug/${appSlug}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("App not found")
+          return res.json()
+        })
+        .then((data) => {
+          setAppInfo(data)
+        })
+        .catch(() => {
+          setError("App not found or inactive")
+        })
+        .finally(() => {
+          setAppLoading(false)
+        })
+    } else {
+      setAppLoading(false)
+    }
+  }, [appSlug])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    // Prepare attachment metadata
+    const attachmentMetadata = attachments
+      .filter((a) => a.uploadedUrl)
+      .map((a) => ({
+        url: a.uploadedUrl!,
+        name: a.file.name,
+        type: a.file.type,
+        size: a.file.size,
+      }))
+
+    try {
+      const res = await fetch("/api/public/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // When using token, send it to use INTEGRATED_APP channel
+          ...(tokenParam && { token: tokenParam }),
+          appSlug,
+          channelType: tokenValid ? undefined : "WEB_FORM", // Let API determine channel when using token
+          subject,
+          message,
+          priority,
+          guestEmail: guestEmail || undefined,
+          guestName: guestName || undefined,
+          guestPhone: guestPhone || undefined,
+          attachments:
+            attachmentMetadata.length > 0 ? attachmentMetadata : undefined,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to create ticket")
+      }
+
+      setCreatedTicketId(data.id)
+      setSubmitted(true)
+
+      // If using token, redirect to ticket detail page
+      if (tokenValid && tokenParam && data.id) {
+        router.push(`/support/tickets/${data.id}?token=${tokenParam}`)
+      }
+    } catch (err: any) {
+      setError(err.message || "An error occurred")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Reset form
+  const resetForm = () => {
+    setSubject("")
+    setMessage("")
+    setPriority("NORMAL")
+    setGuestName("")
+    setGuestEmail("")
+    setGuestPhone("")
+    setAttachments([])
+    setSubmitted(false)
+    setCreatedTicketId(null)
+    setError(null)
+  }
+
+  // Show loading state while fetching app info
+  if (appLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  // Show error if app not found
+  if (appSlug && !appInfo && !error) {
+    return (
+      <Alert variant="destructive" className="mx-auto mt-8 max-w-md">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          App not found or inactive. Please check the URL and try again.
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Show redirect/loading when ticket created with token
+  if (submitted && tokenValid && tokenParam && createdTicketId) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  // Success state (for non-token users)
+  if (submitted && !tokenValid) {
+    return (
+      <Card className="mx-auto max-w-lg">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+            <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+          </div>
+          <CardTitle>Ticket Created Successfully!</CardTitle>
+          <CardDescription>
+            Your ticket has been created and is being processed.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-center">
+          <div className="rounded-lg bg-muted p-4">
+            <p className="text-sm text-muted-foreground">Ticket Number</p>
+            <p className="text-2xl font-bold">
+              {createdTicketId || "Loading..."}
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            We have sent a confirmation email with your ticket details. You can
+            use the ticket number to check the status of your request.
+          </p>
+          <Button onClick={resetForm} className="w-full">
+            Create Another Ticket
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Check if using externalUserId-based token (hide all guest info fields)
+  const isExternalUserIdToken = tokenValid && tokenData?.externalUserId
+
+  return (
+    <Card className={embed ? "border-0 shadow-none" : "mx-auto max-w-2xl"}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MessageSquare className="h-5 w-5" />
+          Create Support Ticket
+        </CardTitle>
+        <CardDescription>
+          {appInfo
+            ? `Submit a support ticket for ${appInfo.name}`
+            : "Fill out the form below to create a support ticket"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Error Alert */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Guest Information Section - Hide for externalUserId tokens */}
+          {!isExternalUserIdToken && (
+            <div className="space-y-4">
+              <h3 className="font-medium">Your Information</h3>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="guestName">
+                    <User className="mr-1 inline h-4 w-4" />
+                    Name
+                  </Label>
+                  <Input
+                    id="guestName"
+                    placeholder="Your name"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="guestEmail">
+                    <Mail className="mr-1 inline h-4 w-4" />
+                    Email *
+                    {tokenValid && (
+                      <span className="ml-2 text-xs font-normal text-green-600 dark:text-green-400">
+                        (Pre-filled from secure access)
+                      </span>
+                    )}
+                  </Label>
+                  <Input
+                    id="guestEmail"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                    required
+                    readOnly={tokenValid}
+                    className={tokenValid ? "cursor-not-allowed bg-muted" : ""}
+                  />
+                  {tokenValid && (
+                    <p className="text-xs text-muted-foreground">
+                      Email is verified and locked for security
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="guestPhone">
+                  <Phone className="mr-1 inline h-4 w-4" />
+                  Phone (Optional)
+                </Label>
+                <Input
+                  id="guestPhone"
+                  type="tel"
+                  placeholder="+62 812 3456 7890"
+                  value={guestPhone}
+                  onChange={(e) => setGuestPhone(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ExternalUserId Token Badge - Show that user is authenticated */}
+          {isExternalUserIdToken && (
+            <div className="rounded-lg border border-primary/20 bg-primary/10 p-3 dark:bg-primary/20">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <div>
+                  <p className="text-sm font-medium text-primary">
+                    You are signed in as{" "}
+                    <strong>{tokenData?.externalUserId}</strong>
+                  </p>
+                  <p className="text-xs text-primary/80">
+                    Your information is securely linked to your account
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Ticket Details Section */}
+          <div className="space-y-4">
+            <h3 className="font-medium">Ticket Details</h3>
+
+            <div className="space-y-2">
+              <Label htmlFor="priority">Priority</Label>
+              <Select value={priority} onValueChange={setPriority}>
+                <SelectTrigger id="priority">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="LOW">Low - General inquiry</SelectItem>
+                  <SelectItem value="NORMAL">
+                    Normal - Standard request
+                  </SelectItem>
+                  <SelectItem value="HIGH">High - Urgent issue</SelectItem>
+                  <SelectItem value="URGENT">
+                    Urgent - Critical issue
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subject">Subject *</Label>
+              <Input
+                id="subject"
+                placeholder="Brief description of your issue"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                required
+                minLength={5}
+                maxLength={200}
+              />
+              <p className="text-xs text-muted-foreground">
+                {subject.length}/200 characters
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="message">Message *</Label>
+              <Textarea
+                id="message"
+                placeholder="Please describe your issue in detail..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                minLength={10}
+                maxLength={5000}
+                rows={6}
+              />
+              <p className="text-xs text-muted-foreground">
+                {message.length}/5000 characters
+              </p>
+            </div>
+          </div>
+
+          {/* Attachments */}
+          <div className="space-y-2">
+            <Label>Attachments (Optional)</Label>
+            <AttachmentUpload
+              maxFiles={3}
+              value={attachments}
+              onFilesChange={setAttachments}
+              uploadEndpoint="ticket-attachment"
+              token={tokenParam || undefined}
+            />
+            <p className="text-xs text-muted-foreground">
+              Max 3 files, 5MB each. Images: JPG, PNG, GIF, WebP | Documents:
+              PDF, DOC, DOCX, XLS, XLSX
+            </p>
+          </div>
+
+          {/* Submit Button */}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Submit Ticket
+              </>
+            )}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+function EmbedWrapper({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams()
+  const embed = searchParams.get("embed") === "true"
+
+  return (
+    <div
+      className={`min-h-screen bg-background p-4 md:p-8 ${embed ? "p-0" : ""} `}
+    >
+      {children}
+    </div>
+  )
+}
+
+export default function NewTicketPage() {
+  return (
+    <EmbedWrapper>
+      <Suspense
+        fallback={
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        }
+      >
+        <TicketForm />
+      </Suspense>
+    </EmbedWrapper>
+  )
+}
