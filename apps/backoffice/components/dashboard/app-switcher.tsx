@@ -52,15 +52,15 @@ export function AppSwitcher() {
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-between px-3 py-2 text-sm font-medium",
-            !selectedAppId && "text-muted-foreground"
+            "w-full justify-between px-3 py-2 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
+            !selectedAppId && "text-sidebar-foreground/55"
           )}
         >
           <div className="flex items-center gap-2">
-            <Building2 className="h-4 w-4" />
+            <Building2 className="h-4 w-4 text-sidebar-foreground/55" />
             <span>{currentApp?.name || "Select App"}</span>
           </div>
-          <ChevronDown className="h-4 w-4 opacity-50" />
+          <ChevronDown className="h-4 w-4 opacity-40" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
@@ -68,9 +68,13 @@ export function AppSwitcher() {
           <>
             <DropdownMenuItem
               onClick={() => setSelectedAppId("all")}
-              className={selectedAppId === "all" ? "bg-accent" : ""}
+              className={
+                selectedAppId === "all"
+                  ? "bg-sidebar-accent/70 text-sidebar-foreground"
+                  : ""
+              }
             >
-              <Building2 className="mr-2 h-4 w-4" />
+              <Building2 className="mr-2 h-4 w-4 text-sidebar-foreground/60" />
               All Apps
               {selectedAppId === "all" && <Check className="ml-auto h-4 w-4" />}
             </DropdownMenuItem>
@@ -82,9 +86,13 @@ export function AppSwitcher() {
           <DropdownMenuItem
             key={app.id}
             onClick={() => setSelectedAppId(app.id)}
-            className={selectedAppId === app.id ? "bg-accent" : ""}
+            className={
+              selectedAppId === app.id
+                ? "bg-sidebar-accent/70 text-sidebar-foreground"
+                : ""
+            }
           >
-            <Building2 className="mr-2 h-4 w-4" />
+            <Building2 className="mr-2 h-4 w-4 text-sidebar-foreground/60" />
             <span className="flex-1">{app.name}</span>
             {counts?.[app.id] !== undefined && (
               <Badge variant="secondary" className="ml-2">

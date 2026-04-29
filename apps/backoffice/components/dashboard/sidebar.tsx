@@ -14,6 +14,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarFooter,
+  SidebarSeparator,
 } from "@workspace/ui/components/sidebar"
 import { usePermissions } from "@/lib/rbac-client/provider"
 import { AppSwitcher } from "@/components/dashboard/app-switcher"
@@ -28,7 +29,6 @@ import {
   Settings,
   LifeBuoy,
   Bell,
-  ChevronRight,
 } from "lucide-react"
 
 const navItems = [
@@ -146,12 +146,12 @@ export function AppSidebar() {
             <SidebarMenuButton
               size="lg"
               asChild
-              className="hover:bg-sidebar-accent/60"
+              className="hover:bg-sidebar-accent/50"
             >
               <Link href="/" className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-lg">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-sidebar-primary shadow-none">
                   <AppIcon
-                    className="size-5 text-sidebar-primary-foreground"
+                    className="size-5 text-sidebar-primary"
                     strokeWidth={2.5}
                   />
                 </div>
@@ -170,76 +170,70 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* App Switcher */}
-      <div className="px-3 py-3">
-        <AppSwitcher />
-      </div>
-
       {/* Navigation */}
-      <SidebarContent className="px-3">
-        {groupedItems.map((group, idx) => (
-          <SidebarGroup key={idx} className="mb-4">
-            {group.heading && (
-              <SidebarGroupLabel className="px-2 py-1.5 text-xs text-muted-foreground">
-                {group.heading}
-              </SidebarGroupLabel>
-            )}
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => {
-                  if ("heading" in item) return null
-                  const active = isActive(item.href)
-                  return (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={active}
-                        className={
-                          active
-                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                            : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                        }
-                      >
-                        <Link
-                          href={item.href}
-                          className="flex items-center gap-3"
+      <SidebarContent className="px-3 pt-2">
+        <nav aria-label="Main navigation" className="flex flex-col gap-5">
+          {groupedItems.map((group, idx) => (
+            <SidebarGroup key={idx}>
+              {group.heading && (
+                <SidebarGroupLabel className="px-2 py-1.5 text-[11px] tracking-[0.16em] text-muted-foreground/80 uppercase">
+                  {group.heading}
+                </SidebarGroupLabel>
+              )}
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => {
+                    if ("heading" in item) return null
+                    const active = isActive(item.href)
+                    return (
+                      <SidebarMenuItem key={item.href}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={active}
+                          aria-current={active ? "page" : undefined}
+                          className={
+                            active
+                              ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-none hover:bg-sidebar-primary/90"
+                              : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground"
+                          }
                         >
-                          <item.icon
-                            className={
-                              active
-                                ? "size-4 text-sidebar-primary-foreground"
-                                : "size-4 text-sidebar-primary"
-                            }
-                          />
-                          <span>{item.label}</span>
-                          {active && (
-                            <ChevronRight className="ml-auto size-3.5 text-sidebar-primary-foreground" />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+                          <Link
+                            href={item.href}
+                            className="flex items-center gap-3"
+                          >
+                            <item.icon
+                              className={
+                                active
+                                  ? "size-4 text-sidebar-primary-foreground"
+                                  : "size-4 text-sidebar-foreground/55"
+                              }
+                            />
+                            <span>{item.label}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </nav>
+
+        <SidebarSeparator className="mx-0 my-4" />
+
+        <div className="px-0 pb-1">
+          <AppSwitcher />
+        </div>
       </SidebarContent>
 
       {/* Footer */}
-      <SidebarFooter className="border-t border-sidebar-border/50 p-3">
-        <div className="flex items-center gap-3 rounded-lg border border-sidebar-border bg-sidebar-accent/40 p-3 backdrop-blur-sm">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary shadow">
-            <AppIcon className="size-4 text-sidebar-primary-foreground" />
-          </div>
-          <div className="flex-1 text-xs">
-            <div className="font-medium text-sidebar-foreground">
-              {appIdentity.name}
-            </div>
-            <div className="text-sidebar-foreground/70">
-              v{appIdentity.version}
-            </div>
-          </div>
+      <SidebarFooter className="border-t border-sidebar-border/50 px-3 py-3">
+        <div className="flex items-center justify-between gap-3 rounded-md px-2 py-1.5 text-xs text-sidebar-foreground/70">
+          <span className="font-medium text-sidebar-foreground/80">
+            {appIdentity.name}
+          </span>
+          <span>v{appIdentity.version}</span>
         </div>
       </SidebarFooter>
 

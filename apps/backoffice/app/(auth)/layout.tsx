@@ -1,4 +1,4 @@
-import { Check } from "lucide-react"
+import Link from "next/link"
 
 export default function AuthLayout({
   children,
@@ -6,62 +6,67 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="grid min-h-screen bg-background lg:grid-cols-2">
-      {/* Left Column - Auth Forms */}
-      <div className="relative z-10 flex h-full flex-col justify-center px-4 py-12 sm:px-6 lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:max-w-md">{children}</div>
+    <div className="grid min-h-svh overflow-hidden lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-auth-gradient-from via-auth-gradient-via to-auth-gradient-to p-8 md:p-12 lg:p-16">
+        <div className="pointer-events-none absolute top-8 -left-24 h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
+        <div className="pointer-events-none absolute top-24 -right-20 h-72 w-72 rounded-full bg-secondary/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[url('/noise.png')] opacity-5 dark:opacity-10" />
+
+        <div className="relative z-10">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2.5 font-heading font-semibold text-auth-heading transition-opacity hover:opacity-70"
+          >
+            <div className="flex size-8 items-center justify-center rounded-xl bg-auth-brand-light text-auth-brand-dark shadow-lg shadow-primary/20">
+              <span className="text-sm font-bold">Z</span>
+            </div>
+            <span className="text-lg">Zilpo Admin</span>
+          </Link>
+        </div>
+
+        <div className="relative z-10 max-w-xl">
+          <h1 className="font-heading text-3xl leading-[1.15] font-bold tracking-tight text-auth-heading md:text-4xl lg:text-5xl">
+            Siap kerja untuk support,
+            <br />
+            akses, dan operasi harian
+          </h1>
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-auth-subtle md:text-auth-muted">
+            Masuk ke panel admin yang rapi, konsisten, dan langsung bisa dipakai
+            untuk mengelola tiket, pengguna, serta permissions.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-4 text-sm text-auth-subtle">
+          <div className="flex items-center gap-2 rounded-full border border-auth-badge-border bg-auth-badge-bg px-3 py-1.5 shadow-sm">
+            <div className="size-1.5 rounded-full bg-auth-brand-light" />
+            <span className="font-medium">Tickets</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-full border border-auth-badge-border bg-auth-badge-bg px-3 py-1.5 shadow-sm">
+            <div className="size-1.5 rounded-full bg-auth-brand-light" />
+            <span className="font-medium">RBAC</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-full border border-auth-badge-border bg-auth-badge-bg px-3 py-1.5 shadow-sm">
+            <div className="size-1.5 rounded-full bg-auth-brand-light" />
+            <span className="font-medium">Analytics</span>
+          </div>
+        </div>
       </div>
 
-      {/* Right Column - Hero */}
-      <div className="to-info relative hidden w-full flex-col justify-center overflow-hidden bg-gradient-to-br from-primary px-4 py-12 sm:px-6 lg:flex lg:px-20 xl:px-24">
-        {/* Decorative elements */}
-        <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
-        <div className="bg-primary-light animate-blob absolute -bottom-32 -left-32 h-96 w-96 rounded-full opacity-40 mix-blend-overlay blur-3xl filter"></div>
-        <div className="bg-info animate-blob animation-delay-2000 absolute top-0 -right-4 h-96 w-96 rounded-full opacity-30 mix-blend-overlay blur-3xl filter"></div>
+      <div className="relative flex flex-col justify-center bg-auth-form-bg p-6 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,auth-radial-gradient_0%,transparent_100%)] md:p-10 lg:p-12">
+        <div className="mb-8 lg:hidden">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2.5 font-heading font-semibold"
+          >
+            <div className="flex size-8 items-center justify-center rounded-lg bg-auth-brand-light text-auth-brand-dark">
+              <span className="text-xs font-bold">Z</span>
+            </div>
+            <span>Zilpo Admin</span>
+          </Link>
+        </div>
 
-        <div className="relative z-10 max-w-md space-y-8 text-white">
-          <h1 className="text-4xl leading-tight font-bold tracking-tight">
-            Akses Semua Layanan dalam Satu Aplikasi
-          </h1>
-          <p className="text-lg leading-relaxed font-medium text-primary-foreground/90">
-            Lebih dari 100+ layanan operasional siap melayani Anda 24/7 dengan
-            cepat, mudah, dan aman.
-          </p>
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center gap-3">
-              <Check className="h-5 w-5 shrink-0 text-primary-foreground/80" />
-              <span className="text-primary-foreground">
-                E-KTP, KK, dan layanan kependudukan
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Check className="h-5 w-5 shrink-0 text-primary-foreground/80" />
-              <span className="text-primary-foreground">
-                Pembayaran pajak dan retribusi online
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Check className="h-5 w-5 shrink-0 text-primary-foreground/80" />
-              <span className="text-primary-foreground">
-                Perizinan usaha dan IMB
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Check className="h-5 w-5 shrink-0 text-primary-foreground/80" />
-              <span className="text-primary-foreground">
-                Layanan kesehatan dan pendidikan
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-12 transform rounded-2xl border border-white/20 bg-white/10 p-6 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] backdrop-blur-md transition duration-300 hover:scale-[1.02]">
-            <p className="mb-1 text-sm font-medium text-primary-foreground/80">
-              Dipercaya oleh
-            </p>
-            <p className="text-3xl font-bold tracking-tight text-white">
-              50.000+ Pengguna
-            </p>
-          </div>
+        <div className="relative mx-auto w-full max-w-sm animate-in duration-700 fade-in slide-in-from-bottom-4">
+          {children}
         </div>
       </div>
     </div>

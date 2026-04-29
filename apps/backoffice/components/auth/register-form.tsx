@@ -107,7 +107,7 @@ export function RegisterForm() {
   // Show success message if registration completed
   if (registrationSuccess) {
     return (
-      <div className="animate-fade-in-up flex flex-col items-center justify-center space-y-4 py-8 text-center">
+      <div className="flex animate-in flex-col items-center justify-center space-y-4 py-8 text-center duration-700 fade-in slide-in-from-bottom-4">
         <div className="bg-success/10 mb-2 flex h-16 w-16 items-center justify-center rounded-full">
           <CheckCircle2 className="text-success h-8 w-8" strokeWidth={1.5} />
         </div>

@@ -1,26 +1,25 @@
 import { Providers } from "@/components/shared/providers"
 import { Toaster } from "@workspace/ui/components/sonner"
 import type { Metadata } from "next"
-import { Fira_Code, Inter, Merriweather } from "next/font/google"
-import Script from "next/script"
-import "./globals.css"
+import { Geist_Mono, Inter, Manrope } from "next/font/google"
+import "@workspace/ui/globals.css"
 
 const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
+  variable: "--font-sans",
   display: "swap",
 })
 
-const merriweather = Merriweather({
-  variable: "--font-merriweather",
-  weight: ["300", "400", "700", "900"],
+const manrope = Manrope({
   subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["500", "600", "700", "800"],
   display: "swap",
 })
 
-const firaCode = Fira_Code({
-  variable: "--font-fira-code",
+const fontMono = Geist_Mono({
   subsets: ["latin"],
+  variable: "--font-mono",
   display: "swap",
 })
 
@@ -42,21 +41,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body
-        className={`${merriweather.variable} ${firaCode.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`antialiased ${fontMono.variable} ${manrope.variable} font-sans ${inter.variable}`}
+    >
+      <body>
         <Providers>{children}</Providers>
         <Toaster />
-        <Script
-          src="https://cdn.jsdelivr.net/npm/eruda"
-          strategy="afterInteractive"
-        />
-        <Script id="eruda-init" strategy="afterInteractive">
-          {`if (window.eruda) {
-            window.eruda.init();
-          }`}
-        </Script>
       </body>
     </html>
   )

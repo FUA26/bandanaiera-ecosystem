@@ -64,7 +64,7 @@ export function ForgotPasswordForm() {
   // Show success message
   if (isSuccess) {
     return (
-      <div className="animate-fade-in-up flex flex-col items-center justify-center space-y-4 py-8 text-center">
+      <div className="flex animate-in flex-col items-center justify-center space-y-4 py-8 text-center duration-700 fade-in slide-in-from-bottom-4">
         <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
           <CheckCircle2 className="h-8 w-8 text-primary" strokeWidth={1.5} />
         </div>

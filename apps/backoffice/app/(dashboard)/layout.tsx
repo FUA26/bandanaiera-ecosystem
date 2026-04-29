@@ -43,13 +43,18 @@ export default async function Layout({
     },
   })
 
+  const dashboardUser = {
+    email: user?.email ?? session.user.email ?? "",
+    name: user?.name ?? session.user.name ?? "",
+    avatarId: user?.avatarId ?? null,
+    role: user?.role ?? session.user.role ?? null,
+  }
+
   return (
     <PermissionProvider initialPermissions={permissions}>
       <AppProvider>
-        <Providers>
-          <DashboardLayout user={user ?? session.user}>
-            {children}
-          </DashboardLayout>
+        <Providers session={session}>
+          <DashboardLayout user={dashboardUser}>{children}</DashboardLayout>
         </Providers>
       </AppProvider>
     </PermissionProvider>

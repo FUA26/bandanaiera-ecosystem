@@ -98,7 +98,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
+        heading: ["var(--font-heading)", "system-ui", "sans-serif"],
+        serif: ["var(--font-heading)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       boxShadow: {

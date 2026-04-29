@@ -2,55 +2,94 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Provider } from "jotai"
-import { ThemeProvider } from "next-themes"
+import { type Session } from "next-auth"
+import { SessionProvider as NextAuthSessionProvider } from "next-auth/react"
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ComponentProps, type ReactNode } from "react"
 
-function ThemeHotkeys() {
+function ThemeProvider({
+  children,
+  ...props
+}: ComponentProps<typeof NextThemesProvider>) {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      {...props}
+    >
+      <ThemeHotkey />
+      {children}
+    </NextThemesProvider>
+  )
+}
+
+function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false
+  }
+
+  return (
+    target.isContentEditable ||
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT"
+  )
+}
+
+function ThemeHotkey() {
+  const { resolvedTheme, setTheme } = useTheme()
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented) return
-      if (event.metaKey || event.ctrlKey || event.altKey) return
-
-      const target = event.target as HTMLElement | null
-      const isTypingTarget =
-        target instanceof HTMLInputElement ||
-        target instanceof HTMLTextAreaElement ||
-        target instanceof HTMLSelectElement ||
-        target?.isContentEditable
-
-      if (isTypingTarget) return
-
-      if (event.key.toLowerCase() === "d") {
-        event.preventDefault()
-        document.documentElement.classList.add("dark")
-        localStorage.setItem("theme", "dark")
-        window.dispatchEvent(new Event("storage"))
+      if (event.defaultPrevented || event.repeat) {
+        return
       }
+
+      if (event.metaKey || event.ctrlKey || event.altKey) {
+        return
+      }
+
+      if (!event.key || event.key.toLowerCase() !== "d") {
+        return
+      }
+
+      if (isTypingTarget(event.target)) {
+        return
+      }
+
+      setTheme(resolvedTheme === "dark" ? "light" : "dark")
     }
 
-    document.addEventListener("keydown", handleKeyDown, true)
-    return () => document.removeEventListener("keydown", handleKeyDown, true)
-  }, [])
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [resolvedTheme, setTheme])
 
   return null
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  session,
+}: {
+  children: ReactNode
+  session?: Session | null
+}) {
   const [queryClient] = useState(() => new QueryClient())
 
   return (
     <QueryClientProvider client={queryClient}>
       <Provider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ThemeHotkeys />
-          <TooltipProvider>{children}</TooltipProvider>
-        </ThemeProvider>
+        <NextAuthSessionProvider session={session}>
+          <ThemeProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ThemeProvider>
+        </NextAuthSessionProvider>
       </Provider>
     </QueryClientProvider>
   )
