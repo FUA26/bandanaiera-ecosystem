@@ -53,19 +53,44 @@ function normalizeRequester(
   }
 }
 
+function pickNonEmptyString(...values: Array<string | null | undefined>) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value
+    }
+  }
+
+  return undefined
+}
+
+function pickValidSize(...values: Array<number | null | undefined>) {
+  for (const value of values) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value
+    }
+  }
+
+  return 0
+}
+
 function normalizeAttachment(attachment: TicketAttachment) {
   const file = attachment.file ?? undefined
 
   return {
     url:
-      file?.serveUrl ??
-      file?.cdnUrl ??
-      file?.storagePath ??
-      attachment.url ??
-      "",
-    name: file?.originalFilename ?? attachment.name ?? "attachment",
-    type: file?.mimeType ?? attachment.type ?? "application/octet-stream",
-    size: file?.size ?? attachment.size ?? 0,
+      pickNonEmptyString(
+        file?.serveUrl,
+        file?.cdnUrl,
+        file?.storagePath,
+        attachment.url
+      ) ?? "",
+    name:
+      pickNonEmptyString(file?.originalFilename, attachment.name) ??
+      "attachment",
+    type:
+      pickNonEmptyString(file?.mimeType, attachment.type) ??
+      "application/octet-stream",
+    size: pickValidSize(file?.size, attachment.size),
   }
 }
 

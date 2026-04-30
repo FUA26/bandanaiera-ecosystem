@@ -144,6 +144,49 @@ describe("splitTicketDetail", () => {
     ])
   })
 
+  it("falls back to safe attachment defaults when fields are empty strings", () => {
+    const result = splitTicketDetail({
+      ticket: {
+        ticketNumber: "NAIE-00006",
+        subject: "Malformed attachments",
+        description: "Body",
+        metadata: {
+          initialContextVersion: 1,
+          templateFields: {},
+        },
+        guestName: null,
+        guestEmail: null,
+        guestPhone: null,
+        attachments: [
+          {
+            file: {
+              serveUrl: "",
+              cdnUrl: "",
+              storagePath: "",
+              originalFilename: "",
+              mimeType: "",
+              size: 0,
+            },
+            url: "",
+            name: "",
+            type: "",
+            size: 0,
+          },
+        ],
+      },
+      messages: [],
+    })
+
+    expect(result.initialContext.attachments).toEqual([
+      {
+        url: "",
+        name: "attachment",
+        type: "application/octet-stream",
+        size: 0,
+      },
+    ])
+  })
+
   it("drops malformed templateFields values and keeps only string entries", () => {
     const arrayMetadata = {
       initialContextVersion: 1,
