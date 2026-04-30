@@ -394,7 +394,7 @@ export function TicketsClient({ tickets }: TicketsClientProps) {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-3xl font-semibold tracking-tight">Tickets</h1>
@@ -426,8 +426,8 @@ export function TicketsClient({ tickets }: TicketsClientProps) {
         />
       </div>
 
-      <Card className="rounded-2xl border-border/70 bg-card shadow-sm">
-        <CardContent className="p-4 sm:p-5">
+      <Card className="w-full min-w-0 overflow-hidden rounded-2xl border-border/70 bg-card shadow-sm">
+        <CardContent className="min-w-0 p-4 sm:p-5">
           <DataTable
             data={tickets}
             columns={columns}

@@ -11,7 +11,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
-  NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+  NEXT_PUBLIC_APP_URL: z.string().url().default("http://172.16.25.161:3200"),
   NEXT_PUBLIC_APP_NAME: z.string().default("Bandanaiera Admin"),
 
   // Database
