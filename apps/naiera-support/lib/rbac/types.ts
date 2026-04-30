@@ -142,7 +142,7 @@ export interface RouteProtectionConfig {
   permissions: Permission[]
   /** Redirect path if unauthorized (default: "/unauthorized") */
   unauthorizedRedirect?: string
-  /** Redirect path if unauthenticated (default: "/login") */
+  /** Redirect path if unauthenticated (default: "/sign-in") */
   loginRedirect?: string
 }
 

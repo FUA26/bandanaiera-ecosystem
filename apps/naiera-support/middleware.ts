@@ -21,8 +21,8 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
   const pathname = req.nextUrl.pathname
   const isOnDashboard =
-    !pathname.startsWith("/login") &&
-    !pathname.startsWith("/register") &&
+    !pathname.startsWith("/sign-in") &&
+    !pathname.startsWith("/sign-up") &&
     !pathname.startsWith("/api") &&
     !pathname.startsWith("/unauthorized") &&
     !pathname.startsWith("/forgot-password") &&
@@ -32,13 +32,13 @@ export default auth((req) => {
     pathname.startsWith(route)
   )
   const isOnAuthPage =
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/register") ||
+    pathname.startsWith("/sign-in") ||
+    pathname.startsWith("/sign-up") ||
     pathname.startsWith("/unauthorized")
 
   // Redirect unauthenticated users trying to access protected routes
   if (isOnDashboard && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", req.url))
+    return NextResponse.redirect(new URL("/sign-in", req.url))
   }
 
   // Check manage routes - requires ADMIN role

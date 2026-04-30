@@ -236,6 +236,7 @@ export function UsersDataTable({ users, onRefresh }: UsersDataTableProps) {
       <DataTable
         data={users}
         columns={columns}
+        paginationClassName="rounded-none border-0 bg-transparent px-0 py-0 shadow-none backdrop-blur-none sm:px-0"
         toolbar={(table) => (
           <div className="flex flex-1 items-center justify-between gap-4">
             <div className="flex items-center gap-2">

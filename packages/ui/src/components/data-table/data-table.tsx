@@ -101,10 +101,7 @@ export function DataTable<TData, TValue>({
   const [density] = React.useState<DensityState>(defaultDensity)
 
   return (
-    <div
-      className={cn("flex w-full flex-col gap-4 overflow-auto", className)}
-      {...props}
-    >
+    <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
       {/* Toolbar */}
       {toolbar && toolbar(table)}
 
@@ -193,10 +190,7 @@ export function DataTableLegacy<TData>({
   ...props
 }: DataTableLegacyProps<TData>) {
   return (
-    <div
-      className={cn("flex w-full flex-col gap-2.5 overflow-auto", className)}
-      {...props}
-    >
+    <div className={cn("flex w-full flex-col gap-2.5", className)} {...props}>
       {children}
       <div className="overflow-hidden rounded-md border">
         <Table>

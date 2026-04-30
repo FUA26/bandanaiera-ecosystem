@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   const session = await auth()
 
   if (!session?.user) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
   // Fetch current user's profile
@@ -45,7 +45,7 @@ export default async function ProfilePage() {
   })
 
   if (!user) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
   // Transform avatar: use proxy URL instead of direct MinIO URL

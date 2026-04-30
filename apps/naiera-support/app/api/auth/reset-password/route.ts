@@ -99,7 +99,7 @@ export async function POST(req: Request) {
         title: "Password Successfully Reset",
         message:
           "Your password has been successfully reset. You can now log in with your new password.",
-        actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login`,
+        actionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/sign-in`,
         actionText: "Log In",
       },
     })

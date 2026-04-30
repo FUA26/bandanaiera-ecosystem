@@ -15,8 +15,8 @@ interface VerifyEmailPageProps {
 }
 
 export const metadata: Metadata = {
-  title: "Verify Email",
-  description: "Verify your email address",
+  title: "Verifikasi Email",
+  description: "Verifikasi alamat email Anda",
 }
 
 async function verifyToken(token: string) {
@@ -65,25 +65,25 @@ export default async function VerifyEmailPage({
         </div>
 
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold">Invalid Verification Link</h1>
+          <h1 className="text-2xl font-bold">Tautan verifikasi tidak valid</h1>
           <p className="text-muted-foreground">
-            The verification link is invalid. Please make sure you clicked the
-            correct link from your email.
+            Tautan verifikasi tidak valid. Pastikan Anda membuka tautan yang
+            benar dari email.
           </p>
         </div>
 
         <div className="flex gap-4">
           <a
-            href="/register"
+            href="/sign-up"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Back to Register
+            Kembali ke daftar
           </a>
           <a
-            href="/login"
+            href="/sign-in"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent"
           >
-            Go to Login
+            Masuk
           </a>
         </div>
       </div>
@@ -114,18 +114,17 @@ export default async function VerifyEmailPage({
         </div>
 
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold">Already Verified</h1>
+          <h1 className="text-2xl font-bold">Email sudah diverifikasi</h1>
           <p className="text-muted-foreground">
-            Your email has already been verified. You can now log in to your
-            account.
+            Email Anda sudah diverifikasi. Anda bisa masuk ke akun sekarang.
           </p>
         </div>
 
         <a
-          href="/login"
+          href="/sign-in"
           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          Go to Login
+          Masuk
         </a>
       </div>
     )
@@ -133,9 +132,9 @@ export default async function VerifyEmailPage({
 
   // Success
   if (result.success) {
-    // Auto-redirect to login after 3 seconds
+    // Auto-redirect to sign in after 3 seconds
     setTimeout(() => {
-      redirect("/login?verified=true")
+      redirect("/sign-in?verified=true")
     }, 3000)
 
     return (
@@ -157,31 +156,31 @@ export default async function VerifyEmailPage({
         </div>
 
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold">Email Verified!</h1>
+          <h1 className="text-2xl font-bold">Email berhasil diverifikasi</h1>
           <p className="text-muted-foreground">
-            Your email has been successfully verified. You can now log in to
-            your account.
+            Email Anda berhasil diverifikasi. Anda bisa masuk sekarang.
           </p>
         </div>
 
         <a
-          href="/login"
+          href="/sign-in"
           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          Go to Login
+          Masuk
         </a>
 
         <p className="text-xs text-muted-foreground">
-          Redirecting automatically in 3 seconds...
+          Dialihkan otomatis dalam 3 detik...
         </p>
       </div>
     )
   }
 
   // Error
-  const errorMessage = result.data?.error || "Verification Failed"
+  const errorMessage = result.data?.error || "Verifikasi gagal"
   const message =
-    result.data?.message || "The verification link is invalid or has expired"
+    result.data?.message ||
+    "Tautan verifikasi tidak valid atau sudah kedaluwarsa"
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4 p-8">
@@ -208,16 +207,16 @@ export default async function VerifyEmailPage({
 
       <div className="flex gap-4">
         <a
-          href="/register"
+          href="/sign-up"
           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          Back to Register
+          Kembali ke daftar
         </a>
         <a
-          href="/login"
+          href="/sign-in"
           className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent"
         >
-          Go to Login
+          Masuk
         </a>
       </div>
     </div>
