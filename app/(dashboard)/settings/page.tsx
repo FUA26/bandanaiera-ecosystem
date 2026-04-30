@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   const session = await auth()
 
   if (!session?.user) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
   // Fetch current user's settings/preferences
@@ -39,7 +39,7 @@ export default async function SettingsPage() {
   })
 
   if (!user) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
   // Transform avatar object to string URL

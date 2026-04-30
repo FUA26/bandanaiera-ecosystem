@@ -37,7 +37,7 @@ export function HeaderUser({
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
-      await signOut({ callbackUrl: "/login" })
+      await signOut({ callbackUrl: "/sign-in" })
     } catch (error) {
       console.error("Logout failed:", error)
       setIsLoggingOut(false)

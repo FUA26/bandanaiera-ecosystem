@@ -31,7 +31,7 @@ interface ProtectedRouteProps {
   permissions: Permission[]
   /** Redirect path if unauthorized (default: "/unauthorized") */
   unauthorizedRedirect?: string
-  /** Redirect path if unauthenticated (default: "/login") */
+  /** Redirect path if unauthenticated (default: "/sign-in") */
   loginRedirect?: string
   /** If true, ALL permissions must be present (AND logic) */
   strict?: boolean
@@ -46,7 +46,7 @@ export async function ProtectedRoute({
   children,
   permissions,
   unauthorizedRedirect = "/unauthorized",
-  loginRedirect = "/login",
+  loginRedirect = "/sign-in",
   strict = false,
   fallback,
 }: ProtectedRouteProps) {

@@ -1,7 +1,7 @@
 /**
  * Registration API Route
  *
- * POST /api/auth/register - Register a new user
+ * POST /api/auth/sign-up - Register a new user
  */
 
 import { prisma } from "@/lib/db/prisma"
@@ -13,7 +13,7 @@ import { hash } from "bcryptjs"
 import { NextResponse } from "next/server"
 
 /**
- * POST /api/auth/register
+ * POST /api/auth/sign-up
  * Register a new user
  */
 export const POST = async (req: Request) => {
@@ -147,7 +147,7 @@ export const POST = async (req: Request) => {
       subject: `Welcome to ${env.NEXT_PUBLIC_APP_NAME}!`,
       data: {
         userName: user.name || "there",
-        loginUrl: `${env.NEXT_PUBLIC_APP_URL}/login`,
+        loginUrl: `${env.NEXT_PUBLIC_APP_URL}/sign-in`,
       },
     }).catch((error) => {
       // Log but don't fail registration

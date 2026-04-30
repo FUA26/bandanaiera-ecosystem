@@ -21,7 +21,6 @@ import {
   DataTableColumnHeader,
   DataTableDateFilter,
   DataTableFacetedFilter,
-  DataTablePaginationSummary,
   DataTableViewOptions,
   type FacetedFilterOption,
 } from "@/components/admin/data-table"
@@ -434,6 +433,7 @@ export function TicketsClient({ tickets }: TicketsClientProps) {
             columns={columns}
             enablePagination={true}
             defaultDensity="short"
+            paginationClassName="rounded-none border-0 bg-transparent px-0 py-0 shadow-none backdrop-blur-none sm:px-0"
             toolbar={(table) => {
               const isFiltered =
                 table.getState().columnFilters.length > 0 ||
@@ -497,13 +497,6 @@ export function TicketsClient({ tickets }: TicketsClientProps) {
                 </div>
               )
             }}
-            paginationLeftContent={(table) => (
-              <DataTablePaginationSummary
-                table={table}
-                itemLabelSingular="ticket"
-                itemLabelPlural="tickets"
-              />
-            )}
             actionBar={(table) => <DataTableActionBar table={table} />}
           />
         </CardContent>

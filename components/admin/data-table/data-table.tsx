@@ -50,6 +50,7 @@ interface DataTableProps<TData, TValue> {
   ) => React.ReactNode
   actionBar?: (table: TanStackTable<TData>) => React.ReactNode
   paginationLeftContent?: (table: TanStackTable<TData>) => React.ReactNode
+  paginationClassName?: string
   enableRowSelection?: boolean
   enablePagination?: boolean
   defaultDensity?: DensityState
@@ -61,6 +62,7 @@ export function DataTable<TData, TValue>({
   toolbar,
   actionBar,
   paginationLeftContent,
+  paginationClassName,
   enableRowSelection = true,
   enablePagination = true,
   defaultDensity = "medium",
@@ -103,6 +105,7 @@ export function DataTable<TData, TValue>({
       toolbar={toolbar}
       actionBar={actionBar}
       paginationLeftContent={paginationLeftContent}
+      paginationClassName={paginationClassName}
       enablePagination={enablePagination}
       defaultDensity={defaultDensity}
     />
@@ -119,6 +122,7 @@ interface DataTableContentProps<TData, TValue> {
   ) => React.ReactNode
   actionBar?: (table: TanStackTable<TData>) => React.ReactNode
   paginationLeftContent?: (table: TanStackTable<TData>) => React.ReactNode
+  paginationClassName?: string
   enablePagination?: boolean
   defaultDensity?: DensityState
 }
@@ -129,6 +133,7 @@ export function DataTableContent<TData, TValue>({
   toolbar,
   actionBar,
   paginationLeftContent,
+  paginationClassName,
   enablePagination = true,
   defaultDensity = "medium",
 }: DataTableContentProps<TData, TValue>) {
@@ -194,10 +199,14 @@ export function DataTableContent<TData, TValue>({
 
       {/* Pagination */}
       {enablePagination && (
-        <DataTablePagination
-          table={table}
-          leftContent={paginationLeftContent?.(table)}
-        />
+        <div className="flex flex-col gap-2.5">
+          {paginationLeftContent && (
+            <div className="px-1 text-sm text-muted-foreground">
+              {paginationLeftContent(table)}
+            </div>
+          )}
+          <DataTablePagination table={table} className={paginationClassName} />
+        </div>
       )}
 
       {/* Action Bar (floating) */}

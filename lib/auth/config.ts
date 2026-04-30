@@ -39,8 +39,8 @@ const config: NextAuthConfig = {
 
   // Custom pages for authentication flow
   pages: {
-    signIn: "/login", // Redirect here when user needs to sign in
-    error: "/login", // Show errors on login page
+    signIn: "/sign-in", // Redirect here when user needs to sign in
+    error: "/sign-in", // Show errors on sign-in page
   },
 
   providers: [

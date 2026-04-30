@@ -19,7 +19,7 @@ export default async function Layout({
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p>Redirecting to login...</p>
+        <p>Redirecting to sign in...</p>
       </div>
     )
   }

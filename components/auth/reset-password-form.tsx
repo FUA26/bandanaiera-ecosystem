@@ -72,10 +72,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   const getStrengthLabel = (strength: number): string => {
     if (strength === 0) return ""
-    if (strength < 40) return "Weak"
-    if (strength < 70) return "Fair"
-    if (strength < 90) return "Good"
-    return "Strong"
+    if (strength < 40) return "Lemah"
+    if (strength < 70) return "Cukup"
+    if (strength < 90) return "Baik"
+    return "Kuat"
   }
 
   const getStrengthColor = (strength: number): string => {
@@ -104,23 +104,19 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.message || "Failed to reset password")
+        throw new Error(result.message || "Gagal menyimpan")
       }
 
       setIsSuccess(true)
-      toast.success(
-        "Password reset successfully. You can now log in with your new password."
-      )
+      toast.success("Kata sandi baru tersimpan.")
 
-      // Redirect to login after 2 seconds
+      // Redirect to sign in after 2 seconds
       setTimeout(() => {
-        window.location.href = "/login"
+        window.location.href = "/sign-in"
       }, 2000)
     } catch (error) {
       console.error("Failed to reset password:", error)
-      toast.error(
-        error instanceof Error ? error.message : "Failed to reset password"
-      )
+      toast.error(error instanceof Error ? error.message : "Gagal menyimpan")
     } finally {
       setIsLoading(false)
     }
@@ -129,18 +125,18 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   // Show success message
   if (isSuccess) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 py-8">
-        <div className="bg-success/10 flex h-16 w-16 items-center justify-center rounded-full">
+      <div className="space-y-4 text-center">
+        <div className="border-success/15 bg-success/10 mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border">
           <HugeiconsIcon
             icon={UserCheck01Icon}
-            className="text-success h-8 w-8"
+            className="text-success h-7 w-7"
           />
         </div>
 
         <div className="space-y-2 text-center">
-          <h3 className="text-xl font-semibold">Password Reset Successful</h3>
+          <h3 className="text-xl font-semibold">Kata sandi tersimpan</h3>
           <p className="text-sm text-muted-foreground">
-            Your password has been reset successfully. Redirecting to login...
+            Anda akan diarahkan ke halaman masuk.
           </p>
         </div>
       </div>
@@ -148,26 +144,26 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
       <Field>
-        <FieldLabel htmlFor="password">New Password</FieldLabel>
+        <FieldLabel htmlFor="password">Kata sandi baru</FieldLabel>
         <FieldContent>
           <div className="space-y-2">
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter new password"
+                placeholder="Kata sandi baru"
                 autoComplete="new-password"
                 {...form.register("password")}
                 disabled={isLoading}
-                className="pr-10"
+                className="h-11 rounded-xl border-border/80 bg-background px-4 pr-12 text-sm shadow-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted/40 disabled:opacity-60"
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+                className="absolute top-0 right-0 h-11 px-3 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
@@ -176,18 +172,17 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   className="h-4 w-4 text-muted-foreground"
                 />
                 <span className="sr-only">
-                  {showPassword ? "Hide password" : "Show password"}
+                  {showPassword
+                    ? "Sembunyikan kata sandi"
+                    : "Tampilkan kata sandi"}
                 </span>
               </Button>
             </div>
 
-            {/* Password Strength Indicator */}
             {newPassword && (
-              <div className="space-y-2">
+              <div className="space-y-2 rounded-2xl border border-border/70 bg-muted/20 p-3">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">
-                    Password strength:
-                  </span>
+                  <span className="text-muted-foreground">Kekuatan</span>
                   <span
                     className={`font-medium ${
                       passwordStrength < 40
@@ -222,23 +217,23 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="confirmPassword">Confirm New Password</FieldLabel>
+        <FieldLabel htmlFor="confirmPassword">Ulangi kata sandi</FieldLabel>
         <FieldContent>
           <div className="relative">
             <Input
               id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm new password"
+              placeholder="Ulangi kata sandi"
               autoComplete="new-password"
               {...form.register("confirmPassword")}
               disabled={isLoading}
-              className="pr-10"
+              className="h-11 rounded-xl border-border/80 bg-background px-4 pr-12 text-sm shadow-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted/40 disabled:opacity-60"
             />
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+              className="absolute top-0 right-0 h-11 px-3 hover:bg-transparent"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={isLoading}
             >
@@ -247,7 +242,9 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 className="h-4 w-4 text-muted-foreground"
               />
               <span className="sr-only">
-                {showConfirmPassword ? "Hide password" : "Show password"}
+                {showConfirmPassword
+                  ? "Sembunyikan kata sandi"
+                  : "Tampilkan kata sandi"}
               </span>
             </Button>
           </div>
@@ -261,16 +258,20 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         />
       </Field>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Resetting Password..." : "Reset Password"}
+      <Button
+        type="submit"
+        className="h-11 w-full rounded-xl font-semibold shadow-sm"
+        disabled={isLoading}
+      >
+        {isLoading ? "Menyimpan..." : "Simpan"}
       </Button>
 
-      <div className="text-center text-sm">
+      <div className="pt-1 text-center text-sm">
         <a
-          href="/login"
+          href="/sign-in"
           className="text-primary underline-offset-4 hover:underline"
         >
-          Back to login
+          Kembali
         </a>
       </div>
     </form>

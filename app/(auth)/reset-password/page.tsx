@@ -6,14 +6,15 @@
  */
 
 import { ResetPasswordForm } from "@/components/auth/reset-password-form"
+import { AuthPageShell } from "@/components/auth/auth-page-shell"
 import { prisma } from "@/lib/db/prisma"
 import { hashToken, isTokenExpired } from "@/lib/tokens"
 import { Alert02Icon, LockPasswordIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 export const metadata = {
-  title: "Reset Password",
-  description: "Reset your password with a secure link",
+  title: "Atur Ulang Kata Sandi - Bandanaiera Admin",
+  description: "Buat kata sandi baru",
 }
 
 interface ResetPasswordPageProps {
@@ -29,33 +30,29 @@ export default async function ResetPasswordPage({
   // Validate token exists
   if (!token) {
     return (
-      <div className="flex min-h-[calc(100vh-theme-spacing.16)] items-center justify-center bg-background p-4">
-        <div className="w-full max-w-md">
-          <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10">
-                <HugeiconsIcon
-                  icon={Alert02Icon}
-                  className="h-6 w-6 text-destructive"
-                />
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-xl font-semibold">Invalid Reset Link</h1>
-                <p className="text-sm text-muted-foreground">
-                  This password reset link is invalid. Please request a new
-                  password reset.
-                </p>
-              </div>
-              <a
-                href="/forgot-password"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                Request New Reset Link
-              </a>
-            </div>
+      <AuthPageShell
+        title="Tautan tidak valid"
+        description="Minta tautan baru untuk lanjut."
+        badge="Reset"
+      >
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-destructive/15 bg-destructive/10">
+            <HugeiconsIcon
+              icon={Alert02Icon}
+              className="h-7 w-7 text-destructive"
+            />
           </div>
+          <p className="mx-auto max-w-[30ch] text-sm leading-6 text-muted-foreground">
+            Tautan ini tidak valid atau sudah kedaluwarsa.
+          </p>
+          <a
+            href="/forgot-password"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            Minta tautan baru
+          </a>
         </div>
-      </div>
+      </AuthPageShell>
     )
   }
 
@@ -75,94 +72,86 @@ export default async function ResetPasswordPage({
   // Check if token is valid
   if (!user) {
     return (
-      <div className="flex min-h-[calc(100vh-theme-spacing.16)] items-center justify-center bg-background p-4">
-        <div className="w-full max-w-md">
-          <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10">
-                <HugeiconsIcon
-                  icon={Alert02Icon}
-                  className="h-6 w-6 text-destructive"
-                />
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-xl font-semibold">Invalid Reset Link</h1>
-                <p className="text-sm text-muted-foreground">
-                  This password reset link is invalid or has already been used.
-                  Please request a new password reset.
-                </p>
-              </div>
-              <a
-                href="/forgot-password"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                Request New Reset Link
-              </a>
-            </div>
+      <AuthPageShell
+        title="Tautan tidak valid"
+        description="Minta tautan baru untuk lanjut."
+        badge="Reset"
+      >
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-destructive/15 bg-destructive/10">
+            <HugeiconsIcon
+              icon={Alert02Icon}
+              className="h-7 w-7 text-destructive"
+            />
           </div>
+          <p className="mx-auto max-w-[30ch] text-sm leading-6 text-muted-foreground">
+            Tautan ini tidak valid atau sudah digunakan.
+          </p>
+          <a
+            href="/forgot-password"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            Minta tautan baru
+          </a>
         </div>
-      </div>
+      </AuthPageShell>
     )
   }
 
   // Check if token has expired
   if (isTokenExpired(user.passwordResetExpires)) {
     return (
-      <div className="flex min-h-[calc(100vh-theme-spacing.16)] items-center justify-center bg-background p-4">
-        <div className="w-full max-w-md">
-          <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="bg-warning/10 flex h-12 w-12 items-center justify-center rounded-lg">
-                <HugeiconsIcon
-                  icon={Alert02Icon}
-                  className="text-warning h-6 w-6"
-                />
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-xl font-semibold">Reset Link Expired</h1>
-                <p className="text-sm text-muted-foreground">
-                  This password reset link has expired. Reset links are only
-                  valid for 1 hour. Please request a new password reset.
-                </p>
-              </div>
-              <a
-                href="/forgot-password"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                Request New Reset Link
-              </a>
-            </div>
+      <AuthPageShell
+        title="Tautan kedaluwarsa"
+        description="Minta tautan baru untuk lanjut."
+        badge="Reset"
+      >
+        <div className="space-y-4 text-center">
+          <div className="border-warning/15 bg-warning/10 mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border">
+            <HugeiconsIcon
+              icon={Alert02Icon}
+              className="text-warning h-7 w-7"
+            />
           </div>
+          <p className="mx-auto max-w-[30ch] text-sm leading-6 text-muted-foreground">
+            Tautan reset sudah kedaluwarsa.
+          </p>
+          <a
+            href="/forgot-password"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            Minta tautan baru
+          </a>
         </div>
-      </div>
+      </AuthPageShell>
     )
   }
 
   // Token is valid, show reset form
   return (
-    <div className="flex min-h-[calc(100vh-theme-spacing.16)] items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-8">
-        {/* Header */}
-        <div className="flex flex-col items-center space-y-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+    <AuthPageShell
+      title="Atur ulang kata sandi"
+      description="Buat kata sandi baru."
+      badge="Reset"
+    >
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/15 bg-primary/10">
             <HugeiconsIcon
               icon={LockPasswordIcon}
-              className="h-6 w-6 text-primary"
+              className="h-5 w-5 text-primary"
             />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Reset Your Password
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your new password below
-          </p>
+          <div>
+            <p className="text-sm font-medium text-foreground">Tautan cocok</p>
+            <p className="text-xs text-muted-foreground">
+              Buat kata sandi baru.
+            </p>
+          </div>
         </div>
 
-        {/* Form Card */}
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <ResetPasswordForm token={token} />
-        </div>
+        <ResetPasswordForm token={token} />
       </div>
-    </div>
+    </AuthPageShell>
   )
 }

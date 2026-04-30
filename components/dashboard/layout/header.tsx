@@ -59,11 +59,11 @@ export function Header() {
           <ThemeToggle />
 
           <Button size="sm" variant="ghost" className="hidden sm:flex" asChild>
-            <Link href="/auth/login">Login</Link>
+            <Link href="/sign-in">Login</Link>
           </Button>
 
           <Button size="sm" className="hidden sm:flex" asChild>
-            <Link href="/auth/register">Sign Up</Link>
+            <Link href="/sign-up">Sign Up</Link>
           </Button>
         </div>
       </nav>
