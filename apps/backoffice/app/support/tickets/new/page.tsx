@@ -159,11 +159,22 @@ function TicketForm() {
       const templateErrors: Record<string, string> = {}
 
       config?.fields.forEach((field) => {
-        const minLength = field.minLength ?? 0
         const fieldValue = templateFields[field.name]
-        if (field.required && (!fieldValue || fieldValue.length < minLength)) {
-          templateErrors[field.name] =
-            `${field.label} is required and must be at least ${minLength} characters`
+
+        if (field.required) {
+          // For select fields, just check if a value is present
+          if (field.type === "select") {
+            if (!fieldValue) {
+              templateErrors[field.name] = `${field.label} is required`
+            }
+          } else {
+            // For text/textarea fields, check minimum length
+            const minLength = field.minLength ?? 0
+            if (!fieldValue || fieldValue.length < minLength) {
+              templateErrors[field.name] =
+                `${field.label} is required and must be at least ${minLength} characters`
+            }
+          }
         }
       })
 

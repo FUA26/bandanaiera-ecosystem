@@ -2,13 +2,12 @@
 
 import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
-import { X, Upload, File } from "lucide-react"
+import { X, Upload, File as FileIcon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { cn } from "@/lib/utils"
 import {
   MAX_ATTACHMENTS_PER_TICKET,
   isImageAttachment,
-  formatFileSize,
   MAX_ATTACHMENT_SIZE,
 } from "@/lib/file-upload/attachment-validation"
 
@@ -62,9 +61,10 @@ export function AttachmentUpload({
         }
       })
 
-      const updatedFiles = [...files, ...newFiles]
-      setFiles(updatedFiles)
-      onFilesChange(updatedFiles)
+      const baseIndex = files.length
+      let nextFiles = [...files, ...newFiles]
+      setFiles(nextFiles)
+      onFilesChange(nextFiles)
 
       // Prepare headers for upload
       const headers: HeadersInit = {}
@@ -98,30 +98,39 @@ export function AttachmentUpload({
           console.log("Upload success:", result.files[0])
 
           // Update file with uploaded data
-          const targetIndex = files.length + i
-          const existingFile = updatedFiles[targetIndex]
+          const targetIndex = baseIndex + i
+          const existingFile = nextFiles[targetIndex]
           if (existingFile) {
-            const updatedWithUrl = [...updatedFiles]
-            updatedWithUrl[targetIndex] = {
-              ...existingFile,
-              uploadedUrl: result.files[0].url,
-              uploadProgress: 100,
-            }
-            setFiles(updatedWithUrl)
-            onFilesChange(updatedWithUrl)
+            nextFiles = nextFiles.map((current, index) =>
+              index === targetIndex
+                ? {
+                    ...current,
+                    uploadedUrl: result.files[0].url,
+                    uploadProgress: 100,
+                  }
+                : current
+            )
+            setFiles(nextFiles)
+            onFilesChange(nextFiles)
           }
         } catch (error: any) {
-          setFiles((prev) =>
-            prev.map((f, idx) =>
-              idx === files.length + i ? { ...f, error: error.message } : f
-            )
+          const targetIndex = baseIndex + i
+          nextFiles = nextFiles.map((current, index) =>
+            index === targetIndex
+              ? {
+                  ...current,
+                  error: error.message,
+                }
+              : current
           )
+          setFiles(nextFiles)
+          onFilesChange(nextFiles)
         }
       }
       setUploading(false)
 
       // Call onClose callback if all files uploaded successfully
-      if (onClose && updatedFiles.every((f) => f.uploadedUrl)) {
+      if (onClose && nextFiles.every((f) => f.uploadedUrl)) {
         onClose()
       }
     },
@@ -214,7 +223,7 @@ function AttachmentThumbnail({
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <File className="h-8 w-8 text-muted-foreground" />
+          <FileIcon className="h-8 w-8 text-muted-foreground" />
         </div>
       )}
       {file.uploadProgress !== undefined &&

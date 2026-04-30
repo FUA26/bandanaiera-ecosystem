@@ -20,6 +20,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "Describe the exact steps to reproduce this bug...",
         rows: 4,
+        minLength: 20,
       },
       {
         name: "expectedBehavior",
@@ -28,6 +29,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "What did you expect to happen?",
         rows: 2,
+        minLength: 10,
       },
       {
         name: "actualBehavior",
@@ -36,6 +38,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "What actually happened?",
         rows: 2,
+        minLength: 10,
       },
       {
         name: "browser",
@@ -83,6 +86,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "What problem would this feature solve?",
         rows: 3,
+        minLength: 30,
       },
       {
         name: "proposedSolution",
@@ -91,6 +95,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "Describe your ideal solution...",
         rows: 3,
+        minLength: 30,
       },
       {
         name: "useCase",
@@ -100,6 +105,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         placeholder:
           "How would you use this feature? Provide specific examples...",
         rows: 3,
+        minLength: 30,
       },
       {
         name: "alternatives",
@@ -238,6 +244,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "Describe what you need help with...",
         rows: 4,
+        minLength: 30,
       },
       {
         name: "currentSetup",
@@ -311,6 +318,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "Please provide details about your inquiry...",
         rows: 4,
+        minLength: 20,
       },
       {
         name: "contactPreference",
@@ -362,6 +370,7 @@ export const TICKET_TYPE_CONFIGS: Record<TicketType, TicketTypeConfig> = {
         required: true,
         placeholder: "How can we help you?",
         rows: 6,
+        minLength: 20,
       },
       {
         name: "expectedResponse",

@@ -148,9 +148,20 @@ export function SmartTicketForm({
       <div className="space-y-6">
         {/* Subject */}
         <div className="space-y-2">
-          <Label htmlFor="subject" className="text-sm font-medium">
-            Subject <span className="text-destructive">*</span>
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="subject" className="text-sm font-medium">
+              Subject <span className="text-destructive">*</span>
+            </Label>
+            <span
+              className={`text-xs ${
+                subject.length > 180
+                  ? "font-medium text-destructive"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {subject.length}/200
+            </span>
+          </div>
           <div className="relative">
             <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm text-muted-foreground">
               {SUBJECT_PREFIXES[ticketType]}
@@ -162,6 +173,7 @@ export function SmartTicketForm({
               placeholder="Brief description of your issue or request"
               className="h-11 rounded-2xl border-border/70 bg-background/80 pl-24 shadow-sm"
               required
+              maxLength={200}
             />
           </div>
           {errors?.subject && (
