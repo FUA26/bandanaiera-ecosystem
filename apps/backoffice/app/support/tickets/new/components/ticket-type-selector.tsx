@@ -7,9 +7,9 @@ import {
   Wrench,
   CreditCard,
   MessageCircle,
+  CheckCircle2,
 } from "lucide-react"
 import { motion } from "framer-motion"
-import { CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { TicketType } from "@/lib/ticketing/ticket-types"
 import { getAllTicketTypeConfigs } from "@/lib/ticketing/form-templates"
@@ -46,18 +46,31 @@ export function TicketTypeSelector({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        role="radiogroup"
+        aria-label="Select ticket type"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {ticketTypes.map((type, index) => {
           const IconComponent = iconMap[type.icon as keyof typeof iconMap]
           const isSelected = selectedType === type.id
 
+          if (!IconComponent) {
+            console.warn(`Icon not found for ticket type: ${type.icon}`)
+            return null
+          }
+
           return (
             <motion.button
               key={type.id}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              aria-label={type.label}
+              aria-describedby={`${type.id}-desc`}
               onClick={() => onSelectType(type.id)}
               className={cn(
                 "group relative flex flex-col items-start rounded-2xl border border-border/70 bg-card/95 p-5 text-left shadow-sm backdrop-blur transition-all duration-200",
-                "hover:-translate-y-0.5 hover:scale-[1.02] hover:border-border hover:shadow-lg",
                 "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none",
                 isSelected && "border-primary bg-primary/5"
               )}
@@ -92,7 +105,10 @@ export function TicketTypeSelector({
 
               <div className="space-y-1.5">
                 <h3 className="font-semibold text-foreground">{type.label}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p
+                  id={`${type.id}-desc`}
+                  className="text-sm leading-relaxed text-muted-foreground"
+                >
                   {type.description}
                 </p>
                 {type.examples && type.examples.length > 0 && (
