@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { splitTicketDetail } from "../ticket-context"
+import type { TicketMetadata } from "../types"
 
 describe("splitTicketDetail", () => {
   it("keeps structured context separate from follow-up messages", () => {
@@ -141,5 +142,57 @@ describe("splitTicketDetail", () => {
         size: 2048,
       },
     ])
+  })
+
+  it("drops malformed templateFields values and keeps only string entries", () => {
+    const arrayMetadata = {
+      initialContextVersion: 1,
+      templateFields: ["bad", "worse"],
+    } as unknown as TicketMetadata
+
+    const arrayResult = splitTicketDetail({
+      ticket: {
+        ticketNumber: "NAIE-00004",
+        subject: "Array template fields",
+        description: "Body",
+        metadata: arrayMetadata,
+        guestName: null,
+        guestEmail: null,
+        guestPhone: null,
+        attachments: [],
+      },
+      messages: [],
+    })
+
+    expect(arrayResult.initialContext.templateFields).toEqual({})
+
+    const mixedMetadata = {
+      initialContextVersion: 1,
+      templateFields: {
+        steps: "Open the app",
+        count: 2,
+        nested: { value: "ignore" },
+        files: ["ignore"],
+        empty: null,
+      },
+    } as unknown as TicketMetadata
+
+    const mixedResult = splitTicketDetail({
+      ticket: {
+        ticketNumber: "NAIE-00005",
+        subject: "Mixed template fields",
+        description: "Body",
+        metadata: mixedMetadata,
+        guestName: null,
+        guestEmail: null,
+        guestPhone: null,
+        attachments: [],
+      },
+      messages: [],
+    })
+
+    expect(mixedResult.initialContext.templateFields).toEqual({
+      steps: "Open the app",
+    })
   })
 })
