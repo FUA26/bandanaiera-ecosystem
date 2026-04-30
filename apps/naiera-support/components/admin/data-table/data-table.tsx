@@ -140,12 +140,12 @@ export function DataTableContent<TData, TValue>({
   const [density, setDensity] = React.useState<DensityState>(defaultDensity)
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full min-w-0 space-y-4">
       {/* Toolbar */}
       {toolbar && toolbar(table, density, setDensity)}
 
       {/* Table */}
-      <div className="rounded-lg border border-border">
+      <div className="w-full min-w-0 overflow-hidden rounded-lg border border-border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
