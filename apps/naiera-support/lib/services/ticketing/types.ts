@@ -53,6 +53,52 @@ export interface AddMessageInput {
   isInternal?: boolean
 }
 
+export interface TicketAttachmentFile {
+  id?: string
+  serveUrl?: string | null
+  cdnUrl?: string | null
+  storagePath?: string | null
+  originalFilename?: string
+  mimeType?: string
+  size?: number
+}
+
+export interface TicketAttachment {
+  file?: TicketAttachmentFile | null
+  url?: string
+  name?: string
+  type?: string
+  size?: number
+}
+
+export interface TicketMetadata extends Record<string, unknown> {
+  ticketType?: string
+  templateFields?: Record<string, string>
+  initialContextVersion?: 1
+}
+
+export interface TicketRequesterSnapshot {
+  name: string | null
+  email: string | null
+  phone: string | null
+}
+
+export interface TicketInitialContext {
+  ticketNumber: string
+  subject: string
+  description: string | null
+  ticketType?: string
+  templateFields: Record<string, string>
+  requester: TicketRequesterSnapshot
+  attachments: Array<{
+    url: string
+    name: string
+    type: string
+    size: number
+  }>
+  source: "structured" | "legacy"
+}
+
 // ============================================================================
 // Response Types
 // ============================================================================
@@ -143,6 +189,8 @@ export interface TicketDetail {
     name: string
     avatar?: string
   }
+  metadata?: TicketMetadata | null
+  attachments?: TicketAttachment[]
   messages: TicketMessage[]
   activities: TicketActivity[]
 }
