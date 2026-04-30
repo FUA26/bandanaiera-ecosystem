@@ -23,7 +23,7 @@ import { verifyAccessToken } from "@/lib/services/ticketing/integration-service"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { token, ...ticketData } = body
+    const { token, ticketType, metadata, ...ticketData } = body
 
     let validated: typeof baseCreateTicketSchema._input
     let tokenPayload: Awaited<ReturnType<typeof verifyAccessToken>> | null =
@@ -184,6 +184,9 @@ export async function POST(request: NextRequest) {
       createdBy: finalUserId,
       // For token-based, store externalUserId for later retrieval
       externalUserId: tokenPayload?.externalUserId,
+      // Store ticket type and template fields in metadata
+      ticketType,
+      metadata,
     })
 
     // Return simplified response with ticket info

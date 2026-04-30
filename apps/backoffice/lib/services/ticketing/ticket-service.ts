@@ -22,6 +22,7 @@ import {
   ActivityAction,
   WebhookEvent,
   SenderType,
+  Priority,
 } from "@prisma/client"
 import { triggerWebhook } from "./webhook-service"
 import {
@@ -29,6 +30,7 @@ import {
   notifyCustomerTicketUpdate,
   notifyCustomerTicketCreated,
 } from "./notification-service"
+import { calculateSlaTargetAt, calculateTicketSla } from "./sla"
 
 // ============================================================================
 // Helper Functions
@@ -58,6 +60,7 @@ function formatTicketListItem(ticket: any): TicketWithRelations {
     subject: ticket.subject,
     status: ticket.status,
     priority: ticket.priority,
+    sla: calculateTicketSla(ticket),
     createdAt: ticket.createdAt,
     updatedAt: ticket.updatedAt,
     app: ticket.app,
@@ -108,6 +111,8 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
     attachments,
     createdBy,
     externalUserId,
+    ticketType,
+    metadata,
   } = data
 
   // Validate app exists and is active
@@ -131,6 +136,17 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
 
   // Generate ticket number
   const ticketNumber = await generateTicketNumber(app.slug)
+  const createdAt = new Date()
+  const ticketPriority = priority || Priority.NORMAL
+
+  // Build metadata object with ticket type and template fields
+  const ticketMetadata: Record<string, unknown> = {
+    ...(metadata || {}),
+  }
+  if (ticketType) {
+    ticketMetadata.ticketType = ticketType
+    ticketMetadata.templateFields = metadata?.templateFields || {}
+  }
 
   // Create ticket with initial message and activity
   const ticket = await prisma.ticket.create({
@@ -140,13 +156,19 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
       channelId,
       subject,
       description,
-      priority: priority || ("NORMAL" as any),
+      priority: ticketPriority,
+      slaTargetAt: calculateSlaTargetAt(ticketPriority, createdAt),
+      createdAt,
       userId,
       guestEmail: guestInfo?.email,
       guestName: guestInfo?.name,
       guestPhone: guestInfo?.phone,
       externalUserId,
       status: TicketStatus.OPEN,
+      metadata:
+        Object.keys(ticketMetadata).length > 0
+          ? (ticketMetadata as unknown as Prisma.InputJsonValue)
+          : undefined,
       messages: {
         create: {
           sender: SenderType.CUSTOMER,
@@ -176,7 +198,10 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
   // Notify agents about new ticket
   await notifyAgentTicketCreated(ticket.id)
 
-  return ticket
+  return {
+    ...ticket,
+    sla: calculateTicketSla(ticket),
+  }
 }
 
 /**
@@ -253,7 +278,10 @@ export async function getTicketById(ticketId: string): Promise<any> {
     throw new Error("TICKET_NOT_FOUND")
   }
 
-  return ticket
+  return {
+    ...ticket,
+    sla: calculateTicketSla(ticket),
+  }
 }
 
 /**
@@ -458,9 +486,32 @@ export async function updateTicket(
     })
   }
 
+  // Keep persisted SLA fields in sync with priority/status changes.
+  if (updates.priority || updates.status || !ticket.slaTargetAt) {
+    const effectivePriority = updates.priority ?? ticket.priority
+    const slaTargetAt = updates.priority
+      ? calculateSlaTargetAt(effectivePriority, ticket.createdAt)
+      : (ticket.slaTargetAt ??
+        calculateSlaTargetAt(effectivePriority, ticket.createdAt))
+    const effectiveStatus = updates.status ?? ticket.status
+    const completedAt =
+      effectiveStatus === TicketStatus.CLOSED
+        ? (updates.closedAt ?? ticket.closedAt)
+        : effectiveStatus === TicketStatus.RESOLVED
+          ? (updates.resolvedAt ?? ticket.resolvedAt)
+          : null
+    const referenceAt = completedAt ?? new Date()
+
+    updates.slaTargetAt = slaTargetAt
+    updates.slaBreachedAt = referenceAt > slaTargetAt ? slaTargetAt : null
+  }
+
   // No changes to make
   if (Object.keys(updates).length === 0) {
-    return ticket
+    return {
+      ...ticket,
+      sla: calculateTicketSla(ticket),
+    }
   }
 
   // Update ticket with activities
@@ -500,7 +551,10 @@ export async function updateTicket(
     })
   }
 
-  return updated
+  return {
+    ...updated,
+    sla: calculateTicketSla(updated),
+  }
 }
 
 /**
@@ -529,11 +583,17 @@ export async function reopenTicket(
     throw new Error("TICKET_NOT_FOUND")
   }
 
+  const slaTargetAt =
+    ticket.slaTargetAt ??
+    calculateSlaTargetAt(ticket.priority, ticket.createdAt)
+
   const updated = await prisma.ticket.update({
     where: { id: ticketId },
     data: {
       status: TicketStatus.IN_PROGRESS,
       closedAt: null,
+      slaTargetAt,
+      slaBreachedAt: new Date() > slaTargetAt ? slaTargetAt : null,
       activities: {
         create: {
           action: ActivityAction.REOPENED,
@@ -548,7 +608,10 @@ export async function reopenTicket(
     ticket: updated,
   })
 
-  return updated
+  return {
+    ...updated,
+    sla: calculateTicketSla(updated),
+  }
 }
 
 /**
@@ -570,7 +633,11 @@ export async function getTicketStats(appId?: string): Promise<{
     select: {
       status: true,
       priority: true,
+      createdAt: true,
+      slaTargetAt: true,
+      slaBreachedAt: true,
       resolvedAt: true,
+      closedAt: true,
       assignedTo: true,
     },
   })
@@ -591,7 +658,6 @@ export async function getTicketStats(appId?: string): Promise<{
 
   let unassigned = 0
   let overdue = 0
-  const now = new Date()
 
   for (const ticket of tickets) {
     // Count by status
@@ -608,14 +674,10 @@ export async function getTicketStats(appId?: string): Promise<{
       unassigned++
     }
 
-    // Count overdue (resolved more than 7 days ago but not closed)
-    if (ticket.resolvedAt && ticket.status !== TicketStatus.CLOSED) {
-      const daysSinceResolved = Math.floor(
-        (now.getTime() - ticket.resolvedAt.getTime()) / (1000 * 60 * 60 * 24)
-      )
-      if (daysSinceResolved > 7) {
-        overdue++
-      }
+    // Count breached SLA tickets that still need attention
+    const sla = calculateTicketSla(ticket)
+    if (sla.status === "BREACHED" && ticket.status !== TicketStatus.CLOSED) {
+      overdue++
     }
   }
 

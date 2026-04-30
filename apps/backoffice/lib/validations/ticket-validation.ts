@@ -88,6 +88,8 @@ export const baseCreateTicketSchema = z.object({
     .string()
     .regex(/^[+]?[\d\s-]+$/, "Invalid phone number format")
     .optional(),
+  ticketType: z.string().optional(), // Ticket type (e.g., BUG_REPORT, FEATURE_REQUEST)
+  metadata: z.record(z.string(), z.any()).optional(), // Additional metadata including templateFields
 })
 
 /**

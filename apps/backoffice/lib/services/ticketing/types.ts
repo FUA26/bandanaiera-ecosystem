@@ -34,6 +34,8 @@ export interface CreateTicketInput {
   attachments?: Array<{ url: string; name: string; type: string; size: number }>
   createdBy?: string
   externalUserId?: string // For integrated app customers
+  ticketType?: string // Ticket type (e.g., BUG_REPORT, FEATURE_REQUEST)
+  metadata?: Record<string, unknown> // Additional metadata including templateFields
 }
 
 export interface UpdateTicketInput {
@@ -61,6 +63,13 @@ export interface TicketWithRelations {
   subject: string
   status: TicketStatus
   priority: Priority
+  sla: {
+    status: "ON_TRACK" | "DUE_SOON" | "BREACHED" | "COMPLETED"
+    targetAt: Date
+    remainingMinutes: number
+    elapsedMinutes: number
+    targetMinutes: number
+  }
   createdAt: Date
   updatedAt: Date
   app: {
@@ -98,6 +107,13 @@ export interface TicketDetail {
   description: string | null
   status: TicketStatus
   priority: Priority
+  sla: {
+    status: "ON_TRACK" | "DUE_SOON" | "BREACHED" | "COMPLETED"
+    targetAt: Date
+    remainingMinutes: number
+    elapsedMinutes: number
+    targetMinutes: number
+  }
   createdAt: Date
   updatedAt: Date
   resolvedAt: Date | null

@@ -512,11 +512,16 @@ model Ticket {
   description String?      @db.Text
   status      TicketStatus @default(OPEN)
   priority    Priority     @default(NORMAL)
+  metadata    Json? // Store ticketType, templateFields, and other structured data
 
   // Agent handling
   assignedTo     String?
   assignedToUser User?     @relation("AssignedTickets", fields: [assignedTo], references: [id])
   assignedAt     DateTime?
+
+  // SLA tracking
+  slaTargetAt   DateTime?
+  slaBreachedAt DateTime?
 
   // Timestamps
   resolvedAt DateTime?
@@ -538,6 +543,8 @@ model Ticket {
   @@index([status])
   @@index([priority])
   @@index([status, assignedTo])
+  @@index([slaTargetAt])
+  @@index([slaBreachedAt])
   @@index([createdAt])
   @@index([ticketNumber])
 }
