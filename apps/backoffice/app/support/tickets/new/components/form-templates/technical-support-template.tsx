@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { Label } from "@workspace/ui/components/label"
+import { Input } from "@workspace/ui/components/input"
 
 interface TechnicalSupportTemplateProps {
   data: {
@@ -60,13 +61,13 @@ export function TechnicalSupportTemplate({
             Environment{" "}
             <span className="text-muted-foreground">(optional)</span>
           </Label>
-          <input
+          <Input
             id="environment"
             type="text"
             value={data.environment || ""}
             onChange={(e) => onChange("environment", e.target.value)}
             placeholder="e.g., Production, Staging, Development"
-            className="flex h-11 w-full rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="h-11 rounded-2xl border-border/70 bg-background/80 shadow-sm"
           />
         </div>
       </div>

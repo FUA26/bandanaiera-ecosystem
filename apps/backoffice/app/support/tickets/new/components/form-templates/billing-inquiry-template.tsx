@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { Label } from "@workspace/ui/components/label"
+import { Input } from "@workspace/ui/components/input"
 
 interface BillingInquiryTemplateProps {
   data: {
@@ -64,13 +65,13 @@ export function BillingInquiryTemplate({
             Invoice Number{" "}
             <span className="text-muted-foreground">(optional)</span>
           </Label>
-          <input
+          <Input
             id="invoiceNumber"
             type="text"
             value={data.invoiceNumber || ""}
             onChange={(e) => onChange("invoiceNumber", e.target.value)}
             placeholder="If applicable, provide invoice number"
-            className="flex h-11 w-full rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="h-11 rounded-2xl border-border/70 bg-background/80 shadow-sm"
           />
         </div>
 
@@ -78,13 +79,13 @@ export function BillingInquiryTemplate({
           <Label htmlFor="amount" className="text-sm font-medium">
             Amount <span className="text-muted-foreground">(optional)</span>
           </Label>
-          <input
+          <Input
             id="amount"
             type="text"
             value={data.amount || ""}
             onChange={(e) => onChange("amount", e.target.value)}
             placeholder="Amount in question (optional)"
-            className="flex h-11 w-full rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="h-11 rounded-2xl border-border/70 bg-background/80 shadow-sm"
           />
         </div>
       </div>

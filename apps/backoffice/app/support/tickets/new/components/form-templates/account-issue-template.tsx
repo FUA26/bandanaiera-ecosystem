@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { Label } from "@workspace/ui/components/label"
+import { Input } from "@workspace/ui/components/input"
 
 interface AccountIssueTemplateProps {
   data: {
@@ -82,13 +83,13 @@ export function AccountIssueTemplate({
           Affected Users{" "}
           <span className="text-muted-foreground">(optional)</span>
         </Label>
-        <input
+        <Input
           id="affectedUsers"
           type="text"
           value={data.affectedUsers || ""}
           onChange={(e) => onChange("affectedUsers", e.target.value)}
           placeholder="Just you or multiple users?"
-          className="flex h-11 w-full rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="h-11 rounded-2xl border-border/70 bg-background/80 shadow-sm"
         />
       </div>
 
