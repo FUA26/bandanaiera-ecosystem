@@ -3,6 +3,7 @@ import {
   TicketInitialContext,
   TicketMetadata,
   TicketRequesterSnapshot,
+  SenderType,
 } from "./types"
 
 export interface TicketDetailPresentationTicket {
@@ -18,7 +19,7 @@ export interface TicketDetailPresentationTicket {
 
 export interface TicketConversationMessage {
   id: string
-  sender: string
+  sender: SenderType
   message: string
   isInternal: boolean
   createdAt: Date
@@ -85,11 +86,24 @@ function normalizeTemplateFields(
 ): Record<string, string> {
   const templateFields = metadata?.templateFields
 
-  if (!templateFields || typeof templateFields !== "object") {
+  if (
+    !templateFields ||
+    typeof templateFields !== "object" ||
+    Array.isArray(templateFields)
+  ) {
     return {}
   }
 
-  return templateFields
+  return Object.entries(templateFields).reduce<Record<string, string>>(
+    (acc, [key, value]) => {
+      if (typeof value === "string") {
+        acc[key] = value
+      }
+
+      return acc
+    },
+    {}
+  )
 }
 
 export function splitTicketDetail<
