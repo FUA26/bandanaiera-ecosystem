@@ -295,14 +295,16 @@ function TicketForm() {
 
   if (submitted && !tokenValid) {
     return (
-      <SuccessState
-        ticketId={createdTicketId || ""}
-        appLabel={appInfo?.name || appSlug || "the app"}
-        channelLabel={
-          tokenData?.channelSlug || channelParam || "the default channel"
-        }
-        onReset={resetForm}
-      />
+      <PageStateShell embed={embed}>
+        <SuccessState
+          ticketId={createdTicketId || ""}
+          appLabel={appInfo?.name || appSlug || "the app"}
+          channelLabel={
+            tokenData?.channelSlug || channelParam || "the default channel"
+          }
+          onReset={resetForm}
+        />
+      </PageStateShell>
     )
   }
 
