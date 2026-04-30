@@ -8,13 +8,13 @@
 
 ## Overview
 
-This document describes the design for merging and enhancing user, role, and permission management features from naiera-admin into zilpo-admin. The goal is to create a complete RBAC management interface while maintaining zilpo-admin's existing patterns and architecture.
+This document describes the design for merging and enhancing user, role, and permission management features from naiera-admin into bandanaiera. The goal is to create a complete RBAC management interface while maintaining bandanaiera's existing patterns and architecture.
 
 ---
 
 ## Current State Analysis
 
-### zilpo-admin (Existing)
+### bandanaiera (Existing)
 
 - **Has:** Basic user list with pagination, search, bulk delete; user/role services; API routes
 - **Missing:** User create/edit dialogs, roles UI page, permissions UI page, advanced features
@@ -31,7 +31,7 @@ This document describes the design for merging and enhancing user, role, and per
 ### 1. Folder Structure
 
 ```
-apps/web/
+apps/support/
 ├── app/(backoffice)/manage/
 │   ├── users/
 │   │   ├── page.tsx          # Enhance existing (add dialogs)
@@ -86,7 +86,7 @@ Use **naiera-admin's pattern** (`ADMIN_*` prefix for consistency):
 
 ### 3. Icon Library
 
-Keep **lucide-react** (zilpo-admin's existing choice) for consistency.
+Keep **lucide-react** (bandanaiera's existing choice) for consistency.
 
 - Already installed and used throughout the app
 - Familiar to the team, matches existing patterns

@@ -8,7 +8,7 @@ import { useState } from "react"
 import { siteConfig } from "@/lib/site-config"
 
 const gitCommands = `$ git clone ${siteConfig.github.url}.git
-$ cd zilpo && pnpm install
+$ cd bandanaiera && pnpm install
 $ pnpm dev
 
 → Ready to ship at localhost:3000`

@@ -1,5 +1,5 @@
 # docker-compose.yml
-# Development services for Zilpo Admin
+# Development services for Bandanaiera Admin
 # Runs PostgreSQL and MinIO - App runs on host machine for development
 
 version: "3.8"
@@ -7,18 +7,18 @@ version: "3.8"
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: zilpo-postgres
+    container_name: bandanaiera-postgres
     restart: unless-stopped
     ports:
       - "7432:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-zilpo}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zilpo123}
-      POSTGRES_DB: ${POSTGRES_DB:-zilpo_admin}
+      POSTGRES_USER: ${POSTGRES_USER:-bandanaiera}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bandanaiera123}
+      POSTGRES_DB: ${POSTGRES_DB:-bandanaiera_admin}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zilpo}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bandanaiera}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -27,7 +27,7 @@ services:
 
   # minio:
   #   image: minio/minio:latest
-  #   container_name: zilpo-minio
+  #   container_name: bandanaiera-minio
   #   restart: unless-stopped
   #   ports:
   #     - "9000:9000" # API
@@ -44,19 +44,19 @@ services:
   #     timeout: 5s
   #     retries: 5
   #   networks:
-  #     - zilpo-network
+  #     - bandanaiera-network
 
   # Optional: Redis for caching/sessions (uncomment if needed)
   # redis:
   #   image: redis:7-alpine
-  #   container_name: zilpo-redis
+  #   container_name: bandanaiera-redis
   #   restart: unless-stopped
   #   ports:
   #     - "6379:6379"
   #   volumes:
   #     - redis_data:/data
   #   networks:
-  #     - zilpo-network
+  #     - bandanaiera-network
 
 volumes:
   postgres_data:

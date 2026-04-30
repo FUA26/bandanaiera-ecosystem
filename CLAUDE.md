@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Zilpo Admin is a modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monorepo with shadcn/ui components. The project is designed for developers who want to skip boilerplate and ship features quickly with patterns that scale.
+Bandanaiera is a monorepo for the Bandanaiera ecosystem. It contains multiple applications and shared packages, with `apps/naiera-support` serving as the standard app reference for conventions shared across the ecosystem.
 
 **Tech Stack:**
 
@@ -36,7 +36,7 @@ pnpm typecheck        # Type check all packages
 pnpm validate         # Run lint, typecheck, and format:check
 ```
 
-### Web app-specific commands (run from apps/web/)
+### Support app-specific commands (run from apps/support/)
 
 ```bash
 pnpm dev              # Start Next.js dev server with Turbopack
@@ -56,9 +56,10 @@ pnpm db:studio        # Open Prisma Studio
 ### Workspace Structure
 
 ```
-zilpo-admin/
+bandanaiera/
 ├── apps/
-│   └── web/                    # Main Next.js application
+│   ├── support/                # Main Next.js application
+│   └── naiera-support/         # Standard app reference for ecosystem apps
 ├── packages/
 │   ├── ui/                     # Shared UI component library (@workspace/ui)
 │   ├── eslint-config/          # Shared ESLint configuration
@@ -87,7 +88,7 @@ zilpo-admin/
 Components are added via the shadcn CLI and placed in the shared UI package:
 
 ```bash
-pnpm dlx shadcn@latest add <component-name> -c apps/web
+pnpm dlx shadcn@latest add <component-name> -c apps/support
 ```
 
 This installs components to `packages/ui/src/components/`.
@@ -103,7 +104,7 @@ import { Button } from "@workspace/ui/components/button"
 ### Component Location
 
 - **Shared components**: `packages/ui/src/components/` - reusable across apps
-- **App-specific components**: `apps/web/components/` - specific to the web app
+- **App-specific components**: `apps/support/components/` - specific to the support app
 
 ### shadcn/ui Configuration
 
@@ -112,7 +113,7 @@ import { Button } from "@workspace/ui/components/button"
 - **Icon library**: `lucide-react`
 - **RSC**: Enabled (React Server Components)
 - **CSS variables**: Enabled for theming
-- **Aliases** (configured in `apps/web/components.json`):
+- **Aliases** (configured in `apps/support/components.json`):
   - `@/components` → app components
   - `@/hooks` → app hooks
   - `@/lib` → app lib
@@ -134,7 +135,7 @@ The UI package includes:
 
 ### Transpilation
 
-The `@workspace/ui` package is transpiled by Next.js (configured in `apps/web/next.config.mjs`):
+The `@workspace/ui` package is transpiled by Next.js (configured in `apps/support/next.config.mjs`):
 
 ```javascript
 transpilePackages: ["@workspace/ui"]
@@ -142,7 +143,7 @@ transpilePackages: ["@workspace/ui"]
 
 ### App Router
 
-Uses Next.js App Router (not Pages Router). All routes are in `apps/web/app/`.
+Uses Next.js App Router (not Pages Router). All routes are in `apps/support/app/`.
 
 ### Route Groups
 
@@ -214,9 +215,9 @@ Sessions are managed by NextAuth and accessible via the `auth()` function in ser
 
 ### Prisma ORM
 
-- Schema defined in `apps/web/prisma/schema.prisma`
+- Schema defined in `apps/support/prisma/schema.prisma`
 - PostgreSQL as the primary database
-- Seed file at `apps/web/prisma/seed.ts`
+- Seed file at `apps/support/prisma/seed.ts`
 
 ### Environment Variables
 
@@ -268,7 +269,7 @@ Configured for file uploads with S3-compatible storage:
 
 ## Feature Organization
 
-Features are organized in `apps/web/features/` by domain:
+Features are organized in `apps/support/features/` by domain:
 
 - `admin/` - Admin-specific functionality
 - `auth/` - Authentication feature modules

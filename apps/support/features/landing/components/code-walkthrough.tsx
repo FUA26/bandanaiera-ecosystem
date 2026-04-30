@@ -18,7 +18,8 @@ export function CodeWalkthrough() {
       <div className="container px-4 sm:px-6">
         <h2 className="heading-section mb-4">See How It Works</h2>
         <p className="text-body mb-10 text-muted-foreground sm:mb-12">
-          Explore the architecture patterns that make Zilpo enterprise-ready.
+          Explore the architecture patterns that make Bandanaiera
+          enterprise-ready.
         </p>
 
         <Tabs defaultValue="feature-structure" className="w-full">

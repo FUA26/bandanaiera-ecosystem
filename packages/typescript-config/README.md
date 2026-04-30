@@ -1,6 +1,6 @@
 # `@workspace/typescript-config`
 
-Shared TypeScript configuration for the Zilpo Admin workspace.
+Shared TypeScript configuration for the Bandanaiera Admin workspace.
 
 ## Usage
 

@@ -81,7 +81,7 @@ export function HeroSection() {
               showCopy={false}
             >
               {
-                "$ npx create-zilpo my-app\n✓ Cloned template\n✓ Installed dependencies  \n✓ Dev server running\n\n→ Ready to ship at localhost:3000"
+                "$ npx create-bandanaiera my-app\n✓ Cloned template\n✓ Installed dependencies  \n✓ Dev server running\n\n→ Ready to ship at localhost:3000"
               }
             </TerminalBlock>
 

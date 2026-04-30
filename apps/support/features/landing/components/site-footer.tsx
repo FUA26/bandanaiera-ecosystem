@@ -28,7 +28,7 @@ export function SiteFooter() {
                 </svg>
               </div>
               <span className="font-heading text-lg font-semibold tracking-tight">
-                zilpo
+                bandanaiera
               </span>
             </Link>
             <p className="max-w-xs text-sm text-muted-foreground">
@@ -83,7 +83,7 @@ export function SiteFooter() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-3 border-t border-border/40 pt-6 sm:flex-row sm:justify-between sm:gap-0">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} zilpo. Crafted for developers.
+            © {new Date().getFullYear()} bandanaiera. Crafted for developers.
           </p>
           <p className="text-sm text-muted-foreground">
             <a

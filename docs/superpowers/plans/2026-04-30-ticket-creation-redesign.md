@@ -13,7 +13,7 @@
 ## File Structure
 
 ```
-apps/backoffice/
+apps/naiera-support/
 ├── app/support/tickets/new/
 │   ├── page.tsx (modify - simplify to wrapper)
 │   └── components/
@@ -46,13 +46,13 @@ apps/backoffice/
 
 **Files:**
 
-- Create: `apps/backoffice/lib/ticketing/ticket-types.ts`
-- Create: `apps/backoffice/lib/ticketing/form-templates.ts`
+- Create: `apps/naiera-support/lib/ticketing/ticket-types.ts`
+- Create: `apps/naiera-support/lib/ticketing/form-templates.ts`
 
 - [ ] **Step 1: Define ticket type enum and interfaces**
 
 ```typescript
-// apps/backoffice/lib/ticketing/ticket-types.ts
+// apps/naiera-support/lib/ticketing/ticket-types.ts
 
 export enum TicketType {
   BUG_REPORT = "BUG_REPORT",
@@ -106,7 +106,7 @@ export interface FormData {
 - [ ] **Step 2: Define template configurations**
 
 ```typescript
-// apps/backoffice/lib/ticketing/form-templates.ts
+// apps/naiera-support/lib/ticketing/form-templates.ts
 
 import { TicketType, TicketTypeConfig } from "./ticket-types"
 import {
@@ -410,13 +410,13 @@ export function getIconComponent(iconName: string) {
 
 - [ ] **Step 3: Run TypeScript type check**
 
-Run: `pnpm typecheck --filter backoffice`
+Run: `pnpm typecheck --filter naiera-support`
 Expected: PASS (no type errors)
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add apps/backoffice/lib/ticketing/
+git add apps/naiera-support/lib/ticketing/
 git commit -m "feat(ticketing): add ticket type system and template configurations
 
 Define ticket type enum, interfaces, and 6 type-specific templates
@@ -429,13 +429,13 @@ with contextual questions and form field configurations."
 
 **Files:**
 
-- Create: `apps/backoffice/app/support/tickets/new/components/ticket-type-selector.tsx`
-- Modify: `apps/backoffice/app/support/tickets/new/page.tsx` (import and use)
+- Create: `apps/naiera-support/app/support/tickets/new/components/ticket-type-selector.tsx`
+- Modify: `apps/naiera-support/app/support/tickets/new/page.tsx` (import and use)
 
 - [ ] **Step 1: Write the type selector component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/ticket-type-selector.tsx
+// apps/naiera-support/app/support/tickets/new/components/ticket-type-selector.tsx
 
 'use client'
 
@@ -532,7 +532,7 @@ export function TicketTypeSelector({
 - [ ] **Step 2: Update page.tsx to use the selector**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/page.tsx
+// apps/naiera-support/app/support/tickets/new/page.tsx
 
 // Add to imports:
 import { TicketTypeSelector } from './components/ticket-type-selector'
@@ -554,19 +554,19 @@ const [selectedType, setSelectedType] = useState<TicketType | null>(null)
 
 - [ ] **Step 3: Install framer-motion if not present**
 
-Run: `pnpm add framer-motion --filter backoffice`
+Run: `pnpm add framer-motion --filter naiera-support`
 Expected: PASS
 
 - [ ] **Step 4: Run dev server and verify type selector renders**
 
-Run: `pnpm dev --filter backoffice`
+Run: `pnpm dev --filter naiera-support`
 Expected: Type selector grid displays with 6 cards, hover effects work, click selects type
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/components/ticket-type-selector.tsx
-git add apps/backoffice/app/support/tickets/new/page.tsx
+git add apps/naiera-support/app/support/tickets/new/components/ticket-type-selector.tsx
+git add apps/naiera-support/app/support/tickets/new/page.tsx
 git commit -m "feat(ticket-form): add ticket type selector component
 
 Implement visual grid selector for 6 ticket types with icons,
@@ -579,15 +579,15 @@ descriptions, and examples. Add hover animations and selection state."
 
 **Files:**
 
-- Create: `apps/backoffice/app/support/tickets/new/components/form-fields/subject-input.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-fields/guidance-textarea.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-fields/priority-select.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-fields/requester-info.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-fields/subject-input.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-fields/guidance-textarea.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-fields/priority-select.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-fields/requester-info.tsx`
 
 - [ ] **Step 1: Create subject input component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/form-fields/subject-input.tsx
+// apps/naiera-support/app/support/tickets/new/components/form-fields/subject-input.tsx
 
 'use client'
 
@@ -664,7 +664,7 @@ export function SubjectInput({
 - [ ] **Step 2: Create guidance textarea component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/form-fields/guidance-textarea.tsx
+// apps/naiera-support/app/support/tickets/new/components/form-fields/guidance-textarea.tsx
 
 'use client'
 
@@ -766,7 +766,7 @@ export function GuidanceTextarea({
 - [ ] **Step 3: Create priority select component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/form-fields/priority-select.tsx
+// apps/naiera-support/app/support/tickets/new/components/form-fields/priority-select.tsx
 
 'use client'
 
@@ -858,7 +858,7 @@ export function PrioritySelect({
 - [ ] **Step 4: Create requester info component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/form-fields/requester-info.tsx
+// apps/naiera-support/app/support/tickets/new/components/form-fields/requester-info.tsx
 
 'use client'
 
@@ -1014,13 +1014,13 @@ export function RequesterInfo({
 
 - [ ] **Step 5: Type check form field components**
 
-Run: `pnpm typecheck --filter backoffice`
+Run: `pnpm typecheck --filter naiera-support`
 Expected: PASS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/components/form-fields/
+git add apps/naiera-support/app/support/tickets/new/components/form-fields/
 git commit -m "feat(ticket-form): add reusable form field components
 
 Create SubjectInput, GuidanceTextarea, PrioritySelect, and
@@ -1034,18 +1034,18 @@ error handling."
 
 **Files:**
 
-- Create: `apps/backoffice/app/support/tickets/new/components/smart-ticket-form.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-templates/bug-report-template.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-templates/feature-request-template.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-templates/account-issue-template.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-templates/technical-support-template.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-templates/billing-inquiry-template.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/form-templates/other-inquiry-template.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/smart-ticket-form.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-templates/bug-report-template.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-templates/feature-request-template.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-templates/account-issue-template.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-templates/technical-support-template.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-templates/billing-inquiry-template.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/form-templates/other-inquiry-template.tsx`
 
 - [ ] **Step 1: Create bug report template**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/form-templates/bug-report-template.tsx
+// apps/naiera-support/app/support/tickets/new/components/form-templates/bug-report-template.tsx
 
 'use client'
 
@@ -1116,7 +1116,7 @@ export function BugReportTemplate({
 - [ ] **Step 2: Create feature request template**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/form-templates/feature-request-template.tsx
+// apps/naiera-support/app/support/tickets/new/components/form-templates/feature-request-template.tsx
 
 'use client'
 
@@ -1217,7 +1217,7 @@ Each follows the same pattern as BugReportTemplate, with appropriate fields from
 - [ ] **Step 4: Create smart form container component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/smart-ticket-form.tsx
+// apps/naiera-support/app/support/tickets/new/components/smart-ticket-form.tsx
 
 'use client'
 
@@ -1504,13 +1504,13 @@ export function SmartTicketForm({
 
 - [ ] **Step 5: Type check smart form**
 
-Run: `pnpm typecheck --filter backoffice`
+Run: `pnpm typecheck --filter naiera-support`
 Expected: PASS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/components/
+git add apps/naiera-support/app/support/tickets/new/components/
 git commit -m "feat(ticket-form): add smart form with type-specific templates
 
 Implement 6 ticket type templates with contextual questions and
@@ -1524,12 +1524,12 @@ appropriate template based on selected type."
 
 **Files:**
 
-- Modify: `apps/backoffice/app/support/tickets/new/page.tsx`
+- Modify: `apps/naiera-support/app/support/tickets/new/page.tsx`
 
 - [ ] **Step 1: Update page.tsx to use new components**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/page.tsx
+// apps/naiera-support/app/support/tickets/new/page.tsx
 
 "use client"
 
@@ -1927,7 +1927,7 @@ export default function NewTicketPage() {
 - [ ] **Step 2: Create success state component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/success-state.tsx
+// apps/naiera-support/app/support/tickets/new/components/success-state.tsx
 
 'use client'
 
@@ -1998,7 +1998,7 @@ export function SuccessState({
 - [ ] **Step 3: Create meta-row utility component**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/meta-row.tsx
+// apps/naiera-support/app/support/tickets/new/components/meta-row.tsx
 
 'use client'
 
@@ -2027,12 +2027,12 @@ Modify existing loading-state.tsx to remove excessive visual elements and keep i
 
 - [ ] **Step 5: Type check page integration**
 
-Run: `pnpm typecheck --filter backoffice`
+Run: `pnpm typecheck --filter naiera-support`
 Expected: PASS
 
 - [ ] **Step 6: Test the flow in dev server**
 
-Run: `pnpm dev --filter backoffice`
+Run: `pnpm dev --filter naiera-support`
 Expected:
 
 1. Type selector displays
@@ -2044,7 +2044,7 @@ Expected:
 - [ ] **Step 7: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/
+git add apps/naiera-support/app/support/tickets/new/
 git commit -m "feat(ticket-form): integrate components and update page
 
 Wire up TicketTypeSelector and SmartTicketForm in page.tsx.
@@ -2058,12 +2058,12 @@ Create SuccessState and update LoadingState components."
 
 **Files:**
 
-- Modify: `apps/backoffice/app/api/public/tickets/route.ts`
+- Modify: `apps/naiera-support/app/api/public/tickets/route.ts`
 
 - [ ] **Step 1: Update API route to handle ticketType and templateFields**
 
 ```typescript
-// apps/backoffice/app/api/public/tickets/route.ts
+// apps/naiera-support/app/api/public/tickets/route.ts
 
 // Add to existing ticket creation logic:
 
@@ -2089,7 +2089,7 @@ Expected: Ticket created with type and template data in metadata
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/backoffice/app/api/public/tickets/route.ts
+git add apps/naiera-support/app/api/public/tickets/route.ts
 git commit -m "feat(api): accept ticketType and templateFields in ticket creation
 
 Extend ticket creation API to accept structured template data
@@ -2102,8 +2102,8 @@ and store it in ticket metadata for better triage and analysis."
 
 **Files:**
 
-- Modify: `apps/backoffice/app/support/tickets/new/components/ticket-type-selector.tsx`
-- Modify: `apps/backoffice/app/support/tickets/new/components/smart-ticket-form.tsx`
+- Modify: `apps/naiera-support/app/support/tickets/new/components/ticket-type-selector.tsx`
+- Modify: `apps/naiera-support/app/support/tickets/new/components/smart-ticket-form.tsx`
 
 - [ ] **Step 1: Ensure mobile responsiveness in type selector**
 
@@ -2121,13 +2121,13 @@ Verify grid breakpoints are correct:
 
 - [ ] **Step 3: Test on mobile viewport**
 
-Run: `pnpm dev --filter backoffice`
+Run: `pnpm dev --filter naiera-support`
 Open DevTools, toggle device toolbar, test at 375px width
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/components/
+git add apps/naiera-support/app/support/tickets/new/components/
 git commit -m "style(ticket-form): add mobile responsive enhancements
 
 Add sticky headers, collapsible sections, and touch-optimized
@@ -2141,8 +2141,8 @@ meet 44px minimum touch target size."
 
 **Files:**
 
-- Modify: `apps/backoffice/app/support/tickets/new/components/ticket-type-selector.tsx`
-- Modify: `apps/backoffice/app/support/tickets/new/components/smart-ticket-form.tsx`
+- Modify: `apps/naiera-support/app/support/tickets/new/components/ticket-type-selector.tsx`
+- Modify: `apps/naiera-support/app/support/tickets/new/components/smart-ticket-form.tsx`
 
 - [ ] **Step 1: Add smooth page transitions**
 
@@ -2160,13 +2160,13 @@ Enhance framer-motion animations:
 
 - [ ] **Step 3: Test animations feel smooth**
 
-Run: `pnpm dev --filter backoffice`
+Run: `pnpm dev --filter naiera-support`
 Verify no jank, animations feel natural
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/components/
+git add apps/naiera-support/app/support/tickets/new/components/
 git commit -m "ui(ticket-form): add smooth animations and micro-interactions
 
 Implement framer-motion animations for type selection and form
@@ -2179,13 +2179,13 @@ transitions. Add hover, focus, and success state animations."
 
 **Files:**
 
-- Create: `apps/backoffice/app/support/tickets/new/components/__tests__/ticket-type-selector.test.tsx`
-- Create: `apps/backoffice/app/support/tickets/new/components/__tests__/smart-ticket-form.test.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/__tests__/ticket-type-selector.test.tsx`
+- Create: `apps/naiera-support/app/support/tickets/new/components/__tests__/smart-ticket-form.test.tsx`
 
 - [ ] **Step 1: Write tests for type selector**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/__tests__/ticket-type-selector.test.tsx
+// apps/naiera-support/app/support/tickets/new/components/__tests__/ticket-type-selector.test.tsx
 
 import { render, screen, fireEvent } from '@testing-library/react'
 import { TicketTypeSelector } from '../ticket-type-selector'
@@ -2238,7 +2238,7 @@ describe('TicketTypeSelector', () => {
 - [ ] **Step 2: Write tests for smart form**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/components/__tests__/smart-ticket-form.test.tsx
+// apps/naiera-support/app/support/tickets/new/components/__tests__/smart-ticket-form.test.tsx
 
 import { render, screen, fireEvent } from '@testing-library/react'
 import { SmartTicketForm } from '../smart-ticket-form'
@@ -2304,13 +2304,13 @@ describe('SmartTicketForm', () => {
 
 - [ ] **Step 3: Run tests**
 
-Run: `pnpm test --filter backoffice`
+Run: `pnpm test --filter naiera-support`
 Expected: All tests pass
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add apps/backoffice/app/support/tickets/new/components/__tests__/
+git add apps/naiera-support/app/support/tickets/new/components/__tests__/
 git commit -m "test(ticket-form): add unit tests for type selector and smart form
 
 Add tests for component rendering, user interactions, and
@@ -2327,7 +2327,7 @@ validation error display."
 
 - [ ] **Step 1: Manual testing checklist**
 
-Run: `pnpm dev --filter backoffice`
+Run: `pnpm dev --filter naiera-support`
 
 Test the following scenarios:
 
@@ -2382,7 +2382,7 @@ Ready for production use."
 
 **Files:**
 
-- Create: `apps/backoffice/docs/support/ticket-creation.md` (optional)
+- Create: `apps/naiera-support/docs/support/ticket-creation.md` (optional)
 
 - [ ] **Step 1: Create usage documentation**
 
@@ -2405,8 +2405,8 @@ Add inline comments explaining:
 - [ ] **Step 3: Commit documentation**
 
 ```bash
-git add apps/backoffice/docs/
-git add apps/backoffice/app/support/tickets/new/
+git add apps/naiera-support/docs/
+git add apps/naiera-support/app/support/tickets/new/
 git commit -m "docs(ticket-form): add usage documentation and code comments
 
 Document how to use and customize the ticket creation form.
@@ -2419,13 +2419,13 @@ Add inline comments to complex sections for maintainability."
 
 **Files:**
 
-- Modify: `apps/backoffice/lib/feature-flags.ts` (create if needed)
-- Modify: `apps/backoffice/app/support/tickets/new/page.tsx`
+- Modify: `apps/naiera-support/lib/feature-flags.ts` (create if needed)
+- Modify: `apps/naiera-support/app/support/tickets/new/page.tsx`
 
 - [ ] **Step 1: Add feature flag**
 
 ```typescript
-// apps/backoffice/lib/feature-flags.ts
+// apps/naiera-support/lib/feature-flags.ts
 
 export const FEATURE_FLAGS = {
   NEW_TICKET_FORM: process.env.FEATURE_FLAG_NEW_TICKET_FORM === "true",
@@ -2435,7 +2435,7 @@ export const FEATURE_FLAGS = {
 - [ ] **Step 2: Update page to use feature flag**
 
 ```typescript
-// apps/backoffice/app/support/tickets/new/page.tsx
+// apps/naiera-support/app/support/tickets/new/page.tsx
 
 import { FEATURE_FLAGS } from '@/lib/feature-flags'
 
@@ -2453,17 +2453,17 @@ return (
 
 - [ ] **Step 3: Test feature flag works**
 
-Run: `FEATURE_FLAG_NEW_TICKET_FORM=false pnpm dev --filter backoffice`
+Run: `FEATURE_FLAG_NEW_TICKET_FORM=false pnpm dev --filter naiera-support`
 Expected: Old form renders
 
-Run: `FEATURE_FLAG_NEW_TICKET_FORM=true pnpm dev --filter backoffice`
+Run: `FEATURE_FLAG_NEW_TICKET_FORM=true pnpm dev --filter naiera-support`
 Expected: New form renders
 
 - [ ] **Step 4: Commit feature flag**
 
 ```bash
-git add apps/backoffice/lib/feature-flags.ts
-git add apps/backoffice/app/support/tickets/new/page.tsx
+git add apps/naiera-support/lib/feature-flags.ts
+git add apps/naiera-support/app/support/tickets/new/page.tsx
 git commit -m "feat(ticket-form): add feature flag for gradual rollout
 
 Add FEATURE_FLAG_NEW_TICKET_FORM to control new form rollout.

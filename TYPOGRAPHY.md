@@ -30,7 +30,7 @@ We use a fluid type scale for marketing/landing pages with semantic class names:
 
 ## Why Manrope?
 
-Manrope brings warmth and personality to headings while remaining professional enough for developer tools. Its geometric shapes with humanist touches create a friendly, approachable feel that aligns with Zilpo's "capable friend" brand personality.
+Manrope brings warmth and personality to headings while remaining professional enough for developer tools. Its geometric shapes with humanist touches create a friendly, approachable feel that aligns with Bandanaiera's "capable friend" brand personality.
 
 ## Usage
 

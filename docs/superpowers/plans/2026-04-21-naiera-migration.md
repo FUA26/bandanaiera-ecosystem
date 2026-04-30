@@ -1,10 +1,10 @@
-# Naiera Admin to Zilpo Admin Migration Implementation Plan
+# Naiera Admin to Bandanaiera Admin Migration Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Migrate core features (auth, RBAC, file upload) from naiera-admin to zilpo-admin while preserving zilpo's modern UI design.
+**Goal:** Migrate core features (auth, RBAC, file upload) from naiera-admin to bandanaiera while preserving bandanaiera's modern UI design.
 
-**Architecture:** Copy-adapt-integrate approach — copy workspace packages from naiera, setup Prisma with hybrid schema, integrate auth/RBAC into existing zilpo routes.
+**Architecture:** Copy-adapt-integrate approach — copy workspace packages from naiera, setup Prisma with hybrid schema, integrate auth/RBAC into existing bandanaiera routes.
 
 **Tech Stack:** Next.js 16, NextAuth v5, Prisma, PostgreSQL, S3/MinIO, TypeScript, shadcn/ui
 
@@ -16,7 +16,7 @@
 
 **Files:**
 
-- Modify: `apps/web/package.json`
+- Modify: `apps/support/package.json`
 - Modify: `package.json` (root)
 
 - [ ] **Step 1: Add Prisma to root package.json**
@@ -38,7 +38,7 @@ pnpm add -w bcrypt @types/bcrypt
 - [ ] **Step 3: Commit**
 
 ```bash
-git add package.json apps/web/package.json
+git add package.json apps/support/package.json
 git commit -m "deps: add prisma and bcrypt"
 ```
 
@@ -46,11 +46,11 @@ git commit -m "deps: add prisma and bcrypt"
 
 **Files:**
 
-- Create: `apps/web/prisma/schema.prisma`
+- Create: `apps/support/prisma/schema.prisma`
 
 - [ ] **Step 1: Create Prisma schema file**
 
-Write to `apps/web/prisma/schema.prisma`:
+Write to `apps/support/prisma/schema.prisma`:
 
 ```prisma
 generator client {
@@ -182,7 +182,7 @@ model File {
   category         FileCategory @default(OTHER)
 
   // Storage
-  bucketName  String  @default("zilpo-uploads")
+  bucketName  String  @default("bandanaiera-uploads")
   storagePath String
   cdnUrl      String?
 
@@ -214,7 +214,7 @@ model File {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/prisma/schema.prisma
+git add apps/support/prisma/schema.prisma
 git commit -m "schema: add prisma schema with auth, rbac, and file models"
 ```
 
@@ -222,11 +222,11 @@ git commit -m "schema: add prisma schema with auth, rbac, and file models"
 
 **Files:**
 
-- Create: `apps/web/lib/prisma.ts`
+- Create: `apps/support/lib/prisma.ts`
 
 - [ ] **Step 1: Create Prisma client singleton**
 
-Write to `apps/web/lib/prisma.ts`:
+Write to `apps/support/lib/prisma.ts`:
 
 ```typescript
 import { PrismaClient } from "@prisma/client"
@@ -243,7 +243,7 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/prisma.ts
+git add apps/support/lib/prisma.ts
 git commit -m "feat: add prisma client singleton"
 ```
 
@@ -254,7 +254,7 @@ git commit -m "feat: add prisma client singleton"
 Run:
 
 ```bash
-cd apps/web && pnpm prisma generate
+cd apps/support && pnpm prisma generate
 ```
 
 - [ ] **Step 2: Create initial migration**
@@ -262,13 +262,13 @@ cd apps/web && pnpm prisma generate
 Run:
 
 ```bash
-cd apps/web && pnpm prisma migrate dev --name init
+cd apps/support && pnpm prisma migrate dev --name init
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/prisma/migrate
+git add apps/support/prisma/migrate
 git commit -m "chore: add initial prisma migration"
 ```
 
@@ -724,11 +724,11 @@ git commit -m "deps: add next-auth v5 and prisma adapter"
 
 **Files:**
 
-- Create: `apps/web/lib/auth/password.ts`
+- Create: `apps/support/lib/auth/password.ts`
 
 - [ ] **Step 1: Create password utilities**
 
-Write to `apps/web/lib/auth/password.ts`:
+Write to `apps/support/lib/auth/password.ts`:
 
 ```typescript
 import bcrypt from "bcrypt"
@@ -768,7 +768,7 @@ export function validatePassword(password: string): {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/auth/password.ts
+git add apps/support/lib/auth/password.ts
 git commit -m "feat: add password hashing and validation utilities"
 ```
 
@@ -776,11 +776,11 @@ git commit -m "feat: add password hashing and validation utilities"
 
 **Files:**
 
-- Create: `apps/web/lib/auth/config.ts`
+- Create: `apps/support/lib/auth/config.ts`
 
 - [ ] **Step 1: Create NextAuth config**
 
-Write to `apps/web/lib/auth/config.ts`:
+Write to `apps/support/lib/auth/config.ts`:
 
 ```typescript
 import NextAuth from "next-auth"
@@ -878,7 +878,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/auth/config.ts
+git add apps/support/lib/auth/config.ts
 git commit -m "feat: add NextAuth configuration with credentials provider"
 ```
 
@@ -886,11 +886,11 @@ git commit -m "feat: add NextAuth configuration with credentials provider"
 
 **Files:**
 
-- Create: `apps/web/app/api/auth/[...nextauth]/route.ts`
+- Create: `apps/support/app/api/auth/[...nextauth]/route.ts`
 
 - [ ] **Step 1: Create NextAuth route handler**
 
-Write to `apps/web/app/api/auth/[...nextauth]/route.ts`:
+Write to `apps/support/app/api/auth/[...nextauth]/route.ts`:
 
 ```typescript
 import { handlers } from "@/lib/auth/config"
@@ -901,7 +901,7 @@ export const { GET, POST } = handlers
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/app/api/auth/[...nextauth]/route.ts
+git add apps/support/app/api/auth/[...nextauth]/route.ts
 git commit -m "feat: add NextAuth API route handler"
 ```
 
@@ -909,14 +909,14 @@ git commit -m "feat: add NextAuth API route handler"
 
 **Files:**
 
-- Modify: `apps/web/features/auth/components/sign-in-form.tsx`
+- Modify: `apps/support/features/auth/components/sign-in-form.tsx`
 
 - [ ] **Step 1: Read existing sign-in form**
 
 Read the current file to understand its structure:
 
 ```bash
-cat apps/web/features/auth/components/sign-in-form.tsx
+cat apps/support/features/auth/components/sign-in-form.tsx
 ```
 
 - [ ] **Step 2: Update sign-in form to use NextAuth**
@@ -1002,7 +1002,7 @@ export function SignInForm() {
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/features/auth/components/sign-in-form.tsx
+git add apps/support/features/auth/components/sign-in-form.tsx
 git commit -m "feat: update sign-in form to use NextAuth"
 ```
 
@@ -1014,12 +1014,12 @@ git commit -m "feat: update sign-in form to use NextAuth"
 
 **Files:**
 
-- Create: `apps/web/lib/rbac/permissions.ts`
-- Create: `apps/web/lib/rbac/roles.ts`
+- Create: `apps/support/lib/rbac/permissions.ts`
+- Create: `apps/support/lib/rbac/roles.ts`
 
 - [ ] **Step 1: Create permission utilities**
 
-Write to `apps/web/lib/rbac/permissions.ts`:
+Write to `apps/support/lib/rbac/permissions.ts`:
 
 ```typescript
 import { cache } from "react"
@@ -1104,7 +1104,7 @@ export async function invalidatePermissionCache(userId: string): Promise<void> {
 
 - [ ] **Step 2: Create role utilities**
 
-Write to `apps/web/lib/rbac/roles.ts`:
+Write to `apps/support/lib/rbac/roles.ts`:
 
 ```typescript
 import { prisma } from "@/lib/prisma"
@@ -1186,7 +1186,7 @@ export async function getAdminRole() {
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/lib/rbac
+git add apps/support/lib/rbac
 git commit -m "feat: add RBAC server utilities"
 ```
 
@@ -1194,11 +1194,11 @@ git commit -m "feat: add RBAC server utilities"
 
 **Files:**
 
-- Create: `apps/web/features/rbac/components/can.tsx`
+- Create: `apps/support/features/rbac/components/can.tsx`
 
 - [ ] **Step 1: Create Can component**
 
-Write to `apps/web/features/rbac/components/can.tsx`:
+Write to `apps/support/features/rbac/components/can.tsx`:
 
 ```typescript
 "use client"
@@ -1226,7 +1226,7 @@ export function Can({ permission, fallback = null, children }: CanProps) {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/rbac/components/can.tsx
+git add apps/support/features/rbac/components/can.tsx
 git commit -m "feat: add Can component for permission-based rendering"
 ```
 
@@ -1234,11 +1234,11 @@ git commit -m "feat: add Can component for permission-based rendering"
 
 **Files:**
 
-- Create: `apps/web/middleware.ts`
+- Create: `apps/support/middleware.ts`
 
 - [ ] **Step 1: Create middleware**
 
-Write to `apps/web/middleware.ts`:
+Write to `apps/support/middleware.ts`:
 
 ```typescript
 import { auth } from "@/lib/auth/config"
@@ -1272,7 +1272,7 @@ export const config = {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/middleware.ts
+git add apps/support/middleware.ts
 git commit -m "feat: add auth middleware for protected routes"
 ```
 
@@ -1284,11 +1284,11 @@ git commit -m "feat: add auth middleware for protected routes"
 
 **Files:**
 
-- Create: `apps/web/lib/services/user-service.ts`
+- Create: `apps/support/lib/services/user-service.ts`
 
 - [ ] **Step 1: Create user service**
 
-Write to `apps/web/lib/services/user-service.ts`:
+Write to `apps/support/lib/services/user-service.ts`:
 
 ```typescript
 import { prisma } from "@/lib/prisma"
@@ -1420,7 +1420,7 @@ export const userService = {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/services/user-service.ts
+git add apps/support/lib/services/user-service.ts
 git commit -m "feat: add user service with CRUD operations"
 ```
 
@@ -1428,11 +1428,11 @@ git commit -m "feat: add user service with CRUD operations"
 
 **Files:**
 
-- Create: `apps/web/lib/services/role-service.ts`
+- Create: `apps/support/lib/services/role-service.ts`
 
 - [ ] **Step 1: Create role service**
 
-Write to `apps/web/lib/services/role-service.ts`:
+Write to `apps/support/lib/services/role-service.ts`:
 
 ```typescript
 import { prisma } from "@/lib/prisma"
@@ -1513,7 +1513,7 @@ export const roleService = {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/services/role-service.ts
+git add apps/support/lib/services/role-service.ts
 git commit -m "feat: add role service with CRUD operations"
 ```
 
@@ -1525,12 +1525,12 @@ git commit -m "feat: add role service with CRUD operations"
 
 **Files:**
 
-- Create: `apps/web/app/api/users/route.ts`
-- Create: `apps/web/app/api/users/[id]/route.ts`
+- Create: `apps/support/app/api/users/route.ts`
+- Create: `apps/support/app/api/users/[id]/route.ts`
 
 - [ ] **Step 1: Create users list/create route**
 
-Write to `apps/web/app/api/users/route.ts`:
+Write to `apps/support/app/api/users/route.ts`:
 
 ```typescript
 import { auth } from "@/lib/auth/config"
@@ -1590,7 +1590,7 @@ export async function POST(req: Request) {
 
 - [ ] **Step 2: Create user detail route**
 
-Write to `apps/web/app/api/users/[id]/route.ts`:
+Write to `apps/support/app/api/users/[id]/route.ts`:
 
 ```typescript
 import { auth } from "@/lib/auth/config"
@@ -1685,7 +1685,7 @@ export async function DELETE(
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/app/api/users
+git add apps/support/app/api/users
 git commit -m "feat: add users API routes"
 ```
 
@@ -1693,12 +1693,12 @@ git commit -m "feat: add users API routes"
 
 **Files:**
 
-- Create: `apps/web/app/api/roles/route.ts`
-- Create: `apps/web/app/api/roles/[id]/route.ts`
+- Create: `apps/support/app/api/roles/route.ts`
+- Create: `apps/support/app/api/roles/[id]/route.ts`
 
 - [ ] **Step 1: Create roles list/create route**
 
-Write to `apps/web/app/api/roles/route.ts`:
+Write to `apps/support/app/api/roles/route.ts`:
 
 ```typescript
 import { auth } from "@/lib/auth/config"
@@ -1753,7 +1753,7 @@ export async function POST(req: Request) {
 
 - [ ] **Step 2: Create role detail route**
 
-Write to `apps/web/app/api/roles/[id]/route.ts`:
+Write to `apps/support/app/api/roles/[id]/route.ts`:
 
 ```typescript
 import { auth } from "@/lib/auth/config"
@@ -1848,7 +1848,7 @@ export async function DELETE(
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/app/api/roles
+git add apps/support/app/api/roles
 git commit -m "feat: add roles API routes"
 ```
 
@@ -1877,11 +1877,11 @@ git commit -m "deps: add AWS SDK for S3"
 
 **Files:**
 
-- Create: `apps/web/lib/storage/s3.ts`
+- Create: `apps/support/lib/storage/s3.ts`
 
 - [ ] **Step 1: Create S3 client**
 
-Write to `apps/web/lib/storage/s3.ts`:
+Write to `apps/support/lib/storage/s3.ts`:
 
 ```typescript
 import {
@@ -1912,7 +1912,7 @@ export async function generatePresignedUrl(
   expiresIn: number = 3600
 ): Promise<string> {
   const command = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET || "zilpo-uploads",
+    Bucket: process.env.S3_BUCKET || "bandanaiera-uploads",
     Key: key,
     ContentType: contentType,
   })
@@ -1925,7 +1925,7 @@ export async function generatePresignedDownloadUrl(
   expiresIn: number = 3600
 ): Promise<string> {
   const command = new GetObjectCommand({
-    Bucket: process.env.S3_BUCKET || "zilpo-uploads",
+    Bucket: process.env.S3_BUCKET || "bandanaiera-uploads",
     Key: key,
   })
 
@@ -1946,7 +1946,7 @@ export function generateKey(
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/storage/s3.ts
+git add apps/support/lib/storage/s3.ts
 git commit -m "feat: add S3 client and presigned URL utilities"
 ```
 
@@ -1954,11 +1954,11 @@ git commit -m "feat: add S3 client and presigned URL utilities"
 
 **Files:**
 
-- Create: `apps/web/lib/services/file-service.ts`
+- Create: `apps/support/lib/services/file-service.ts`
 
 - [ ] **Step 1: Create file service**
 
-Write to `apps/web/lib/services/file-service.ts`:
+Write to `apps/support/lib/services/file-service.ts`:
 
 ```typescript
 import { prisma } from "@/lib/prisma"
@@ -1996,7 +1996,7 @@ export const fileService = {
         size: options.size,
         category: options.category,
         storagePath,
-        bucketName: process.env.S3_BUCKET || "zilpo-uploads",
+        bucketName: process.env.S3_BUCKET || "bandanaiera-uploads",
         uploadedById: options.userId,
         isPublic: options.isPublic ?? false,
         cdnUrl: options.isPublic
@@ -2063,7 +2063,7 @@ export const fileService = {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/services/file-service.ts
+git add apps/support/lib/services/file-service.ts
 git commit -m "feat: add file upload service"
 ```
 
@@ -2071,11 +2071,11 @@ git commit -m "feat: add file upload service"
 
 **Files:**
 
-- Create: `apps/web/app/api/files/upload/route.ts`
+- Create: `apps/support/app/api/files/upload/route.ts`
 
 - [ ] **Step 1: Create upload route**
 
-Write to `apps/web/app/api/files/upload/route.ts`:
+Write to `apps/support/app/api/files/upload/route.ts`:
 
 ```typescript
 import { auth } from "@/lib/auth/config"
@@ -2122,7 +2122,7 @@ export async function POST(req: Request) {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/app/api/files/upload/route.ts
+git add apps/support/app/api/files/upload/route.ts
 git commit -m "feat: add file upload API route"
 ```
 
@@ -2134,11 +2134,11 @@ git commit -m "feat: add file upload API route"
 
 **Files:**
 
-- Create: `apps/web/prisma/seed.ts`
+- Create: `apps/support/prisma/seed.ts`
 
 - [ ] **Step 1: Create seed script**
 
-Write to `apps/web/prisma/seed.ts`:
+Write to `apps/support/prisma/seed.ts`:
 
 ```typescript
 import { PrismaClient } from "@prisma/client"
@@ -2191,10 +2191,10 @@ async function main() {
   const hashedPassword = await bcrypt.hash("admin123", 10)
 
   const adminUser = await prisma.user.upsert({
-    where: { email: "admin@zilpo.com" },
+    where: { email: "admin@bandanaiera.com" },
     update: {},
     create: {
-      email: "admin@zilpo.com",
+      email: "admin@bandanaiera.com",
       name: "Admin",
       password: hashedPassword,
       roleId: adminRole.id,
@@ -2202,7 +2202,7 @@ async function main() {
   })
 
   console.log("Seed completed!")
-  console.log("Admin user: admin@zilpo.com / admin123")
+  console.log("Admin user: admin@bandanaiera.com / admin123")
 }
 
 main()
@@ -2217,7 +2217,7 @@ main()
 
 - [ ] **Step 2: Add seed script to package.json**
 
-Update `apps/web/package.json`:
+Update `apps/support/package.json`:
 
 ```json
 {
@@ -2240,13 +2240,13 @@ pnpm add -D -w tsx
 Run:
 
 ```bash
-cd apps/web && pnpm prisma db seed
+cd apps/support && pnpm prisma db seed
 ```
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add apps/web/prisma/seed.ts apps/web/package.json package.json
+git add apps/support/prisma/seed.ts apps/support/package.json package.json
 git commit -m "feat: add database seed script with admin user"
 ```
 
@@ -2258,15 +2258,15 @@ git commit -m "feat: add database seed script with admin user"
 
 **Files:**
 
-- Create: `apps/web/.env.example`
+- Create: `apps/support/.env.example`
 
 - [ ] **Step 1: Create env example**
 
-Write to `apps/web/.env.example`:
+Write to `apps/support/.env.example`:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/zilpo"
+DATABASE_URL="postgresql://user:password@localhost:5432/bandanaiera"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
@@ -2276,7 +2276,7 @@ NEXTAUTH_SECRET="your-secret-key-here"
 AWS_REGION="us-east-1"
 AWS_ACCESS_KEY_ID="your-access-key"
 AWS_SECRET_ACCESS_KEY="your-secret-key"
-S3_BUCKET="zilpo-uploads"
+S3_BUCKET="bandanaiera-uploads"
 
 # Optional: MinIO for local development
 # MINIO_ENDPOINT="http://localhost:9000"
@@ -2288,7 +2288,7 @@ S3_BUCKET="zilpo-uploads"
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/.env.example
+git add apps/support/.env.example
 git commit -m "chore: add environment variables template"
 ```
 
@@ -2309,7 +2309,7 @@ pnpm dev
 - [ ] **Step 2: Test sign in**
 
 1. Navigate to `http://localhost:3000/sign-in`
-2. Enter credentials: `admin@zilpo.com` / `admin123`
+2. Enter credentials: `admin@bandanaiera.com` / `admin123`
 3. Verify redirect to `/dashboard`
 4. Check that session is valid
 

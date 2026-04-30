@@ -21,7 +21,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <div className="flex size-8 items-center justify-center rounded-xl bg-auth-brand-light text-auth-brand-dark shadow-lg shadow-primary/20">
               <span className="text-sm font-bold">Z</span>
             </div>
-            <span className="text-lg">Zilpo</span>
+            <span className="text-lg">Bandanaiera</span>
           </Link>
         </div>
 
@@ -67,7 +67,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <div className="flex size-8 items-center justify-center rounded-lg bg-auth-brand-light text-auth-brand-dark">
               <span className="text-xs font-bold">Z</span>
             </div>
-            <span>Zilpo</span>
+            <span>Bandanaiera</span>
           </Link>
         </div>
 

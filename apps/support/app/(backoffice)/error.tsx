@@ -134,7 +134,7 @@ export default function Error({
                 className="mt-2 h-auto p-0 text-primary"
               >
                 <Link
-                  href="https://github.com/zilpo/zilpo/issues"
+                  href="https://github.com/bandanaiera/bandanaiera/issues"
                   target="_blank"
                   rel="noreferrer"
                 >

@@ -30,7 +30,7 @@ export default function GlobalError({
                 <div className="text-destructive-foreground flex size-8 items-center justify-center rounded-xl bg-destructive shadow-lg shadow-destructive/20">
                   <AlertTriangle className="h-4 w-4" />
                 </div>
-                <span className="text-lg">Zilpo</span>
+                <span className="text-lg">Bandanaiera</span>
               </Link>
             </div>
 
@@ -70,7 +70,7 @@ export default function GlobalError({
                 <div className="text-destructive-foreground flex size-8 items-center justify-center rounded-lg bg-destructive">
                   <AlertTriangle className="h-3 w-3" />
                 </div>
-                <span>Zilpo</span>
+                <span>Bandanaiera</span>
               </Link>
             </div>
 
@@ -105,7 +105,7 @@ export default function GlobalError({
                   Go to Home
                 </Link>
                 <Link
-                  href="https://github.com/zilpo/zilpo/issues"
+                  href="https://github.com/bandanaiera/bandanaiera/issues"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"

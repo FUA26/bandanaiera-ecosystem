@@ -1,4 +1,4 @@
-# Dockerfile for Zilpo Admin Support App
+# Dockerfile for Bandanaiera Admin Support App
 # Multi-stage build for optimal image size
 
 FROM node:20-alpine AS base

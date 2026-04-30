@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build complete RBAC management interface with user, role, and permission CRUD operations, adapting features from naiera-admin to zilpo-admin's architecture.
+**Goal:** Build complete RBAC management interface with user, role, and permission CRUD operations, adapting features from naiera-admin to bandanaiera's architecture.
 
 **Architecture:** Client-side forms with react-hook-form + zod validation, server-side services with Prisma, protected API routes using ADMIN\_\* permissions.
 
@@ -15,7 +15,7 @@
 ### Files to Create
 
 ```
-apps/web/
+apps/support/
 ├── app/(backoffice)/manage/
 │   ├── layout.tsx                          # New: manage section wrapper
 │   ├── users/
@@ -54,7 +54,7 @@ apps/web/
 ### Files to Modify
 
 ```
-apps/web/
+apps/support/
 ├── features/backoffice/components/
 │   ├── backoffice-sidebar.tsx              # Update: add manage section links
 │   └── user-list.tsx                       # Enhance: add dialog integration
@@ -77,12 +77,12 @@ apps/web/
 
 **Files:**
 
-- Create: `apps/web/lib/validations/user.ts`
+- Create: `apps/support/lib/validations/user.ts`
 
 - [ ] **Step 1: Create user validation schemas**
 
 ```typescript
-// apps/web/lib/validations/user.ts
+// apps/support/lib/validations/user.ts
 import { z } from "zod"
 
 export const createUserSchema = z.object({
@@ -107,7 +107,7 @@ export type UpdateUserInput = z.infer<typeof updateUserSchema>
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/validations/user.ts
+git add apps/support/lib/validations/user.ts
 git commit -m "feat: add user validation schemas"
 ```
 
@@ -117,12 +117,12 @@ git commit -m "feat: add user validation schemas"
 
 **Files:**
 
-- Create: `apps/web/lib/validations/role.ts`
+- Create: `apps/support/lib/validations/role.ts`
 
 - [ ] **Step 1: Create role validation schemas**
 
 ```typescript
-// apps/web/lib/validations/role.ts
+// apps/support/lib/validations/role.ts
 import { z } from "zod"
 
 // Permission type - will be a string like "ADMIN_USERS_MANAGE"
@@ -165,7 +165,7 @@ export type CloneRoleInput = z.infer<typeof cloneRoleSchema>
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/validations/role.ts
+git add apps/support/lib/validations/role.ts
 git commit -m "feat: add role validation schemas"
 ```
 
@@ -175,12 +175,12 @@ git commit -m "feat: add role validation schemas"
 
 **Files:**
 
-- Create: `apps/web/lib/validations/permission.ts`
+- Create: `apps/support/lib/validations/permission.ts`
 
 - [ ] **Step 1: Create permission validation schemas**
 
 ```typescript
-// apps/web/lib/validations/permission.ts
+// apps/support/lib/validations/permission.ts
 import { z } from "zod"
 
 export const createPermissionSchema = z.object({
@@ -224,7 +224,7 @@ export type UpdatePermissionInput = z.infer<typeof updatePermissionSchema>
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/validations/permission.ts
+git add apps/support/lib/validations/permission.ts
 git commit -m "feat: add permission validation schemas"
 ```
 
@@ -236,12 +236,12 @@ git commit -m "feat: add permission validation schemas"
 
 **Files:**
 
-- Create: `apps/web/lib/services/permission-service.ts`
+- Create: `apps/support/lib/services/permission-service.ts`
 
 - [ ] **Step 1: Create permission service**
 
 ```typescript
-// apps/web/lib/services/permission-service.ts
+// apps/support/lib/services/permission-service.ts
 import { prisma } from "@/lib/prisma"
 
 export interface PermissionStats {
@@ -400,7 +400,7 @@ export const permissionService = {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/services/permission-service.ts
+git add apps/support/lib/services/permission-service.ts
 git commit -m "feat: add permission service with CRUD operations"
 ```
 
@@ -412,11 +412,11 @@ git commit -m "feat: add permission service with CRUD operations"
 
 **Files:**
 
-- Modify: `apps/web/lib/services/role-service.ts`
+- Modify: `apps/support/lib/services/role-service.ts`
 
 - [ ] **Step 1: Add stats and clone methods to role service**
 
-Add the following to the existing `roleService` object in `apps/web/lib/services/role-service.ts`:
+Add the following to the existing `roleService` object in `apps/support/lib/services/role-service.ts`:
 
 ```typescript
 // Add after existing methods...
@@ -507,7 +507,7 @@ async getRoleWithUserCount(id: string) {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/lib/services/role-service.ts
+git add apps/support/lib/services/role-service.ts
 git commit -m "feat: add stats and clone methods to role service"
 ```
 
@@ -519,18 +519,18 @@ git commit -m "feat: add stats and clone methods to role service"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/user-form.tsx`
+- Create: `apps/support/features/backoffice/components/admin/user-form.tsx`
 
 - [ ] **Step 1: Install required dependencies**
 
 ```bash
-cd apps/web && pnpm add react-hook-form @hookform/resolvers
+cd apps/support && pnpm add react-hook-form @hookform/resolvers
 ```
 
 - [ ] **Step 2: Create user form component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/user-form.tsx
+// apps/support/features/backoffice/components/admin/user-form.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
@@ -672,7 +672,7 @@ export function UserForm({
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/user-form.tsx
+git add apps/support/features/backoffice/components/admin/user-form.tsx
 git commit -m "feat: add user form component with validation"
 ```
 
@@ -682,12 +682,12 @@ git commit -m "feat: add user form component with validation"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/user-dialog.tsx`
+- Create: `apps/support/features/backoffice/components/admin/user-dialog.tsx`
 
 - [ ] **Step 1: Create user dialog component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/user-dialog.tsx
+// apps/support/features/backoffice/components/admin/user-dialog.tsx
 "use client"
 
 import {
@@ -824,7 +824,7 @@ export function UserDialog({ open, onOpenChange, mode, userId, onSuccess }: User
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/user-dialog.tsx
+git add apps/support/features/backoffice/components/admin/user-dialog.tsx
 git commit -m "feat: add user dialog component"
 ```
 
@@ -834,7 +834,7 @@ git commit -m "feat: add user dialog component"
 
 **Files:**
 
-- Modify: `apps/web/features/backoffice/components/user-list.tsx`
+- Modify: `apps/support/features/backoffice/components/user-list.tsx`
 
 - [ ] **Step 1: Add dialog integration to user list**
 
@@ -890,7 +890,7 @@ Add the dialog components before the closing `</>` tag:
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/user-list.tsx
+git add apps/support/features/backoffice/components/user-list.tsx
 git commit -m "feat: integrate user dialog into user list"
 ```
 
@@ -902,12 +902,12 @@ git commit -m "feat: integrate user dialog into user list"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/permission-matrix.tsx`
+- Create: `apps/support/features/backoffice/components/admin/permission-matrix.tsx`
 
 - [ ] **Step 1: Create permission matrix component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/permission-matrix.tsx
+// apps/support/features/backoffice/components/admin/permission-matrix.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
@@ -1075,7 +1075,7 @@ export function PermissionMatrix({
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/permission-matrix.tsx
+git add apps/support/features/backoffice/components/admin/permission-matrix.tsx
 git commit -m "feat: add permission matrix component"
 ```
 
@@ -1085,12 +1085,12 @@ git commit -m "feat: add permission matrix component"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/role-form.tsx`
+- Create: `apps/support/features/backoffice/components/admin/role-form.tsx`
 
 - [ ] **Step 1: Create role form component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/role-form.tsx
+// apps/support/features/backoffice/components/admin/role-form.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
@@ -1236,7 +1236,7 @@ export function RoleForm({
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/role-form.tsx
+git add apps/support/features/backoffice/components/admin/role-form.tsx
 git commit -m "feat: add role form component"
 ```
 
@@ -1246,12 +1246,12 @@ git commit -m "feat: add role form component"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/role-dialog.tsx`
+- Create: `apps/support/features/backoffice/components/admin/role-dialog.tsx`
 
 - [ ] **Step 1: Create role dialog component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/role-dialog.tsx
+// apps/support/features/backoffice/components/admin/role-dialog.tsx
 "use client"
 
 import {
@@ -1419,7 +1419,7 @@ export function RoleDialog({ open, onOpenChange, mode, roleId, onSuccess }: Role
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/role-dialog.tsx
+git add apps/support/features/backoffice/components/admin/role-dialog.tsx
 git commit -m "feat: add role dialog component"
 ```
 
@@ -1429,12 +1429,12 @@ git commit -m "feat: add role dialog component"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/role-delete-dialog.tsx`
+- Create: `apps/support/features/backoffice/components/admin/role-delete-dialog.tsx`
 
 - [ ] **Step 1: Create role delete dialog component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/role-delete-dialog.tsx
+// apps/support/features/backoffice/components/admin/role-delete-dialog.tsx
 "use client"
 
 import {
@@ -1542,7 +1542,7 @@ export function RoleDeleteDialog({
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/role-delete-dialog.tsx
+git add apps/support/features/backoffice/components/admin/role-delete-dialog.tsx
 git commit -m "feat: add role delete dialog component"
 ```
 
@@ -1552,18 +1552,18 @@ git commit -m "feat: add role delete dialog component"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/roles-table.tsx`
+- Create: `apps/support/features/backoffice/components/admin/roles-table.tsx`
 
 - [ ] **Step 1: Install tanstack table**
 
 ```bash
-cd apps/web && pnpm add @tanstack/react-table
+cd apps/support && pnpm add @tanstack/react-table
 ```
 
 - [ ] **Step 2: Create roles table component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/roles-table.tsx
+// apps/support/features/backoffice/components/admin/roles-table.tsx
 "use client"
 
 import { Badge } from "@workspace/ui/components/badge"
@@ -1796,7 +1796,7 @@ export function RolesTable({
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/roles-table.tsx
+git add apps/support/features/backoffice/components/admin/roles-table.tsx
 git commit -m "feat: add roles table component with tanstack"
 ```
 
@@ -1808,12 +1808,12 @@ git commit -m "feat: add roles table component with tanstack"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/permission-dialog.tsx`
+- Create: `apps/support/features/backoffice/components/admin/permission-dialog.tsx`
 
 - [ ] **Step 1: Create permission dialog component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/permission-dialog.tsx
+// apps/support/features/backoffice/components/admin/permission-dialog.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
@@ -2087,7 +2087,7 @@ export function PermissionDialog({
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/permission-dialog.tsx
+git add apps/support/features/backoffice/components/admin/permission-dialog.tsx
 git commit -m "feat: add permission dialog component"
 ```
 
@@ -2097,12 +2097,12 @@ git commit -m "feat: add permission dialog component"
 
 **Files:**
 
-- Create: `apps/web/features/backoffice/components/admin/permissions-table.tsx`
+- Create: `apps/support/features/backoffice/components/admin/permissions-table.tsx`
 
 - [ ] **Step 1: Create permissions table component**
 
 ```typescript
-// apps/web/features/backoffice/components/admin/permissions-table.tsx
+// apps/support/features/backoffice/components/admin/permissions-table.tsx
 "use client"
 
 import {
@@ -2483,7 +2483,7 @@ export function PermissionsTable({ data, categories, onRefresh }: PermissionsTab
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/admin/permissions-table.tsx
+git add apps/support/features/backoffice/components/admin/permissions-table.tsx
 git commit -m "feat: add permissions table component"
 ```
 
@@ -2495,13 +2495,13 @@ git commit -m "feat: add permissions table component"
 
 **Files:**
 
-- Create: `apps/web/app/api/permissions/route.ts`
-- Create: `apps/web/app/api/permissions/[id]/route.ts`
+- Create: `apps/support/app/api/permissions/route.ts`
+- Create: `apps/support/app/api/permissions/[id]/route.ts`
 
 - [ ] **Step 1: Create permissions list and create route**
 
 ```typescript
-// apps/web/app/api/permissions/route.ts
+// apps/support/app/api/permissions/route.ts
 import { auth } from "@/lib/auth/config"
 import { permissionService } from "@/lib/services/permission-service"
 import { requirePermission } from "@/lib/rbac/permissions"
@@ -2605,7 +2605,7 @@ export async function POST(req: Request) {
 - [ ] **Step 2: Create permission detail route**
 
 ```typescript
-// apps/web/app/api/permissions/[id]/route.ts
+// apps/support/app/api/permissions/[id]/route.ts
 import { auth } from "@/lib/auth/config"
 import { permissionService } from "@/lib/services/permission-service"
 import { requirePermission } from "@/lib/rbac/permissions"
@@ -2693,7 +2693,7 @@ export async function DELETE(
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/app/api/permissions/
+git add apps/support/app/api/permissions/
 git commit -m "feat: add permissions API routes"
 ```
 
@@ -2703,12 +2703,12 @@ git commit -m "feat: add permissions API routes"
 
 **Files:**
 
-- Create: `apps/web/app/api/roles/[id]/clone/route.ts`
+- Create: `apps/support/app/api/roles/[id]/clone/route.ts`
 
 - [ ] **Step 1: Create role clone route**
 
 ```typescript
-// apps/web/app/api/roles/[id]/clone/route.ts
+// apps/support/app/api/roles/[id]/clone/route.ts
 import { auth } from "@/lib/auth/config"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { roleService } from "@/lib/services/role-service"
@@ -2775,7 +2775,7 @@ export async function POST(
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/app/api/roles/[id]/clone/route.ts
+git add apps/support/app/api/roles/[id]/clone/route.ts
 git commit -m "feat: add role clone API endpoint"
 ```
 
@@ -2785,7 +2785,7 @@ git commit -m "feat: add role clone API endpoint"
 
 **Files:**
 
-- Modify: `apps/web/app/api/roles/route.ts`
+- Modify: `apps/support/app/api/roles/route.ts`
 
 - [ ] **Step 1: Add stats support to roles GET route**
 
@@ -2829,7 +2829,7 @@ export async function GET(req: Request) {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/app/api/roles/route.ts
+git add apps/support/app/api/roles/route.ts
 git commit -m "feat: add stats support to roles API"
 ```
 
@@ -2839,12 +2839,12 @@ git commit -m "feat: add stats support to roles API"
 
 **Files:**
 
-- Create: `apps/web/app/(backoffice)/users/layout.tsx`
+- Create: `apps/support/app/(backoffice)/users/layout.tsx`
 
 - [ ] **Step 1: Create users layout**
 
 ```typescript
-// apps/web/app/(backoffice)/users/layout.tsx
+// apps/support/app/(backoffice)/users/layout.tsx
 export default function UsersLayout({
   children,
 }: {
@@ -2857,7 +2857,7 @@ export default function UsersLayout({
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/app/\(backoffice\)/users/layout.tsx
+git add apps/support/app/\(backoffice\)/users/layout.tsx
 git commit -m "feat: add users page layout"
 ```
 
@@ -2867,13 +2867,13 @@ git commit -m "feat: add users page layout"
 
 **Files:**
 
-- Create: `apps/web/app/(backoffice)/roles/page.tsx`
-- Create: `apps/web/app/(backoffice)/roles/layout.tsx`
+- Create: `apps/support/app/(backoffice)/roles/page.tsx`
+- Create: `apps/support/app/(backoffice)/roles/layout.tsx`
 
 - [ ] **Step 1: Create roles page**
 
 ```typescript
-// apps/web/app/(backoffice)/roles/page.tsx
+// apps/support/app/(backoffice)/roles/page.tsx
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
@@ -3087,7 +3087,7 @@ export default function RolesPage() {
 - [ ] **Step 2: Create roles layout**
 
 ```typescript
-// apps/web/app/(backoffice)/roles/layout.tsx
+// apps/support/app/(backoffice)/roles/layout.tsx
 export default function RolesLayout({
   children,
 }: {
@@ -3100,7 +3100,7 @@ export default function RolesLayout({
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/app/\(backoffice\)/roles/
+git add apps/support/app/\(backoffice\)/roles/
 git commit -m "feat: add roles management page"
 ```
 
@@ -3110,13 +3110,13 @@ git commit -m "feat: add roles management page"
 
 **Files:**
 
-- Create: `apps/web/app/(backoffice)/permissions/page.tsx`
-- Create: `apps/web/app/(backoffice)/permissions/layout.tsx`
+- Create: `apps/support/app/(backoffice)/permissions/page.tsx`
+- Create: `apps/support/app/(backoffice)/permissions/layout.tsx`
 
 - [ ] **Step 1: Create permissions page**
 
 ```typescript
-// apps/web/app/(backoffice)/permissions/page.tsx
+// apps/support/app/(backoffice)/permissions/page.tsx
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
@@ -3265,7 +3265,7 @@ export default function PermissionsPage() {
 - [ ] **Step 2: Create permissions layout**
 
 ```typescript
-// apps/web/app/(backoffice)/permissions/layout.tsx
+// apps/support/app/(backoffice)/permissions/layout.tsx
 export default function PermissionsLayout({
   children,
 }: {
@@ -3278,7 +3278,7 @@ export default function PermissionsLayout({
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/web/app/\(backoffice\)/permissions/
+git add apps/support/app/\(backoffice\)/permissions/
 git commit -m "feat: add permissions management page"
 ```
 
@@ -3288,7 +3288,7 @@ git commit -m "feat: add permissions management page"
 
 **Files:**
 
-- Modify: `apps/web/app/(backoffice)/layout.tsx`
+- Modify: `apps/support/app/(backoffice)/layout.tsx`
 
 - [ ] **Step 1: Add manage section routes to breadcrumb config**
 
@@ -3310,7 +3310,7 @@ const breadcrumbConfig: Record<
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/app/\(backoffice\)/layout.tsx
+git add apps/support/app/\(backoffice\)/layout.tsx
 git commit -m "feat: add manage routes to breadcrumb config"
 ```
 
@@ -3320,7 +3320,7 @@ git commit -m "feat: add manage routes to breadcrumb config"
 
 **Files:**
 
-- Modify: `apps/web/features/backoffice/components/backoffice-sidebar.tsx`
+- Modify: `apps/support/features/backoffice/components/backoffice-sidebar.tsx`
 
 - [ ] **Step 1: Update sidebar nav items**
 
@@ -3368,7 +3368,7 @@ Also add `KeyIcon` to the imports from `lucide-react`.
 - [ ] **Step 2: Commit**
 
 ```bash
-git add apps/web/features/backoffice/components/backoffice-sidebar.tsx
+git add apps/support/features/backoffice/components/backoffice-sidebar.tsx
 git commit -m "feat: update sidebar with separate roles/permissions links"
 ```
 
@@ -3380,12 +3380,12 @@ git commit -m "feat: update sidebar with separate roles/permissions links"
 
 **Files:**
 
-- Create: `apps/web/app/(backoffice)/manage/layout.tsx`
+- Create: `apps/support/app/(backoffice)/manage/layout.tsx`
 
 - [ ] **Step 1: Create manage section layout wrapper**
 
 ```typescript
-// apps/web/app/(backoffice)/manage/layout.tsx
+// apps/support/app/(backoffice)/manage/layout.tsx
 export default function ManageLayout({
   children,
 }: {
@@ -3399,9 +3399,9 @@ export default function ManageLayout({
 
 Move the following pages:
 
-- `apps/web/app/(backoffice)/users/` → `apps/web/app/(backoffice)/manage/users/`
-- `apps/web/app/(backoffice)/roles/` → `apps/web/app/(backoffice)/manage/roles/`
-- `apps/web/app/(backoffice)/permissions/` → `apps/web/app/(backoffice)/manage/permissions/`
+- `apps/support/app/(backoffice)/users/` → `apps/support/app/(backoffice)/manage/users/`
+- `apps/support/app/(backoffice)/roles/` → `apps/support/app/(backoffice)/manage/roles/`
+- `apps/support/app/(backoffice)/permissions/` → `apps/support/app/(backoffice)/manage/permissions/`
 
 - [ ] **Step 3: Update breadcrumb config for new paths**
 
@@ -3410,7 +3410,7 @@ Move the following pages:
 - [ ] **Step 5: Commit**
 
 ```bash
-git add apps/web/app/\(backoffice\)/manage/
+git add apps/support/app/\(backoffice\)/manage/
 git commit -m "feat: create manage section with nested routes"
 ```
 

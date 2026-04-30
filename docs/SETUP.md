@@ -1,6 +1,6 @@
-# Zilpo Admin - Setup & Development Guide
+# Bandanaiera Admin - Setup & Development Guide
 
-Complete guide for setting up and working with Zilpo Admin project.
+Complete guide for setting up and working with Bandanaiera Admin project.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ App will be available at `http://localhost:3000`
 
 ## Docker Setup
 
-Zilpo Admin uses Docker for infrastructure services (PostgreSQL, MinIO) while the app runs on your host machine for faster development.
+Bandanaiera Admin uses Docker for infrastructure services (PostgreSQL, MinIO) while the app runs on your host machine for faster development.
 
 ### Starting Services
 
@@ -69,11 +69,11 @@ docker-compose down -v
 
 ### Services Overview
 
-| Service       | Port | Access URL              | Credentials                    |
-| ------------- | ---- | ----------------------- | ------------------------------ |
-| PostgreSQL    | 5432 | `localhost:5432`        | `zilpo` / `zilpo123`           |
-| MinIO API     | 9000 | `http://localhost:9000` | `minioadmin` / `minioadmin123` |
-| MinIO Console | 9001 | `http://localhost:9001` | Same as API                    |
+| Service       | Port | Access URL              | Credentials                      |
+| ------------- | ---- | ----------------------- | -------------------------------- |
+| PostgreSQL    | 5432 | `localhost:5432`        | `bandanaiera` / `bandanaiera123` |
+| MinIO API     | 9000 | `http://localhost:9000` | `minioadmin` / `minioadmin123`   |
+| MinIO Console | 9001 | `http://localhost:9001` | Same as API                      |
 
 ### Managing Services
 
@@ -99,19 +99,19 @@ docker-compose up -d --build
 
 1. Open `http://localhost:9001` in your browser
 2. Login with `minioadmin` / `minioadmin123`
-3. Create bucket named `zilpo-uploads` (or your configured bucket name)
+3. Create bucket named `bandanaiera-uploads` (or your configured bucket name)
 
 ### Database Access
 
 You can use any PostgreSQL client:
 
-- **Command line:** `docker exec -it zilpo-postgres psql -U zilpo -d zilpo_admin`
+- **Command line:** `docker exec -it bandanaiera-postgres psql -U bandanaiera -d bandanaiera_admin`
 - **GUI:** Use TablePlus, DBeaver, or pgAdmin with:
   - Host: `localhost`
   - Port: `5432`
-  - User: `zilpo`
-  - Password: `zilpo123`
-  - Database: `zilpo_admin`
+  - User: `bandanaiera`
+  - Password: `bandanaiera123`
+  - Database: `bandanaiera_admin`
 
 ### Running App in Docker (Optional)
 
@@ -142,7 +142,7 @@ cp .env.docker.example .env
 | `DATABASE_URL`          | ✅       | -                       | PostgreSQL connection string                                          |
 | `NEXTAUTH_SECRET`       | ✅       | -                       | Secret for NextAuth sessions (generate with `openssl rand-base64 32`) |
 | `NEXTAUTH_URL`          | ✅       | `http://localhost:3000` | Your app's URL                                                        |
-| `S3_BUCKET`             | ❌       | `zilpo-uploads`         | Bucket name for file uploads                                          |
+| `S3_BUCKET`             | ❌       | `bandanaiera-uploads`   | Bucket name for file uploads                                          |
 | `AWS_REGION`            | ❌       | `us-east-1`             | AWS/S3 region                                                         |
 | `AWS_ACCESS_KEY_ID`     | ❌       | -                       | S3 access key (MinIO uses `minioadmin`)                               |
 | `AWS_SECRET_ACCESS_KEY` | ❌       | -                       | S3 secret key (MinIO uses `minioadmin123`)                            |
@@ -441,7 +441,7 @@ Connection refused at localhost:5432
 4. **Verify DATABASE_URL in .env:**
    ```bash
    # Should match Docker credentials
-   DATABASE_URL="postgresql://zilpo:zilpo123@localhost:5432/zilpo_admin?schema=public"
+   DATABASE_URL="postgresql://bandanaiera:bandanaiera123@localhost:5432/bandanaiera_admin?schema=public"
    ```
 
 #### Migration Failed
@@ -610,7 +610,7 @@ Error: Unable to reach MinIO server
 
 2. **Verify bucket exists:**
    - Go to `http://localhost:9001`
-   - Login and create bucket `zilpo-uploads`
+   - Login and create bucket `bandanaiera-uploads`
 
 3. **Check MINIO_ENDPOINT in .env:**
    ```bash
@@ -706,11 +706,11 @@ git log --oneline --graph --all
 
 ```bash
 # Enter container shell
-docker exec -it zilpo-postgres sh
-docker exec -it zilpo-postgres psql -U zilpo -d zilpo_admin
+docker exec -it bandanaiera-postgres sh
+docker exec -it bandanaiera-postgres psql -U bandanaiera -d bandanaiera_admin
 
 # View container logs
-docker logs zilpo-postgres -f
+docker logs bandanaiera-postgres -f
 
 # Remove all unused Docker data
 docker system prune -a --volumes
@@ -720,10 +720,10 @@ docker system prune -a --volumes
 
 ```bash
 # Backup database
-docker exec zilpo-postgres pg_dump -U zilpo zilpo_admin > backup.sql
+docker exec bandanaiera-postgres pg_dump -U bandanaiera bandanaiera_admin > backup.sql
 
 # Restore database
-docker exec -i zilpo-postgres psql -U zilpo zilpo_admin < backup.sql
+docker exec -i bandanaiera-postgres psql -U bandanaiera bandanaiera_admin < backup.sql
 
 # Drop all tables
 pnpm --filter support db:push --force-reset
@@ -733,11 +733,11 @@ pnpm --filter support db:push --force-reset
 
 ## Default Credentials Summary
 
-| Service     | Username        | Password      | URL                   |
-| ----------- | --------------- | ------------- | --------------------- |
-| App (Admin) | admin@pisky.dev | admin123      | http://localhost:3000 |
-| PostgreSQL  | zilpo           | zilpo123      | localhost:5432        |
-| MinIO       | minioadmin      | minioadmin123 | http://localhost:9001 |
+| Service     | Username        | Password       | URL                   |
+| ----------- | --------------- | -------------- | --------------------- |
+| App (Admin) | admin@pisky.dev | admin123       | http://localhost:3000 |
+| PostgreSQL  | bandanaiera     | bandanaiera123 | localhost:5432        |
+| MinIO       | minioadmin      | minioadmin123  | http://localhost:9001 |
 
 ---
 

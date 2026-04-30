@@ -1,4 +1,4 @@
-# Naiera Admin to Zilpo Admin Migration Design
+# Naiera Admin to Bandanaiera Admin Migration Design
 
 **Date:** 2026-04-21
 **Status:** Approved
@@ -6,13 +6,13 @@
 
 ## Overview
 
-Migrate core features from `naiera-admin` to `zilpo-admin` while preserving zilpo's modern UI design system. This combines zilpo's clean, approachable aesthetics with naiera's robust authentication, RBAC, and file upload systems.
+Migrate core features from `naiera-admin` to `bandanaiera` while preserving bandanaiera's modern UI design system. This combines bandanaiera's clean, approachable aesthetics with naiera's robust authentication, RBAC, and file upload systems.
 
 ## Goals
 
-1. **Preserve zilpo's UI** — Keep the modern, warm design system
+1. **Preserve bandanaiera's UI** — Keep the modern, warm design system
 2. **Add core functionality** — RBAC, user management, file upload from naiera
-3. **Clean integration** — Minimal disruption to existing zilpo codebase
+3. **Clean integration** — Minimal disruption to existing bandanaiera codebase
 4. **Maintainable architecture** — Clear separation between layers
 
 ## Scope
@@ -30,7 +30,7 @@ Migrate core features from `naiera-admin` to `zilpo-admin` while preserving zilp
 - Task management module
 - Activity logging
 - Email templates
-- Landing page features from naiera (zilpo's is better)
+- Landing page features from naiera (bandanaiera's is better)
 
 ## Architecture
 
@@ -38,11 +38,11 @@ Migrate core features from `naiera-admin` to `zilpo-admin` while preserving zilp
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        zilpo-admin                           │
+│                        bandanaiera                           │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
 │  │   Landing   │  │    Auth     │  │ Backoffice  │         │
-│  │  (zilpo)    │  │  (zilpo+    │  │ (zilpo+RBAC) │         │
+│  │  (bandanaiera)    │  │  (bandanaiera+    │  │ (bandanaiera+RBAC) │         │
 │  │             │  │   naiera)   │  │             │         │
 │  └─────────────┘  └─────────────┘  └─────────────┘         │
 │                           │                                  │
@@ -51,7 +51,7 @@ Migrate core features from `naiera-admin` to `zilpo-admin` while preserving zilp
 │  │              Workspace Packages                      │    │
 │  │  ┌───────────┐ ┌──────────┐ ┌─────────┐ ┌────────┐  │    │
 │  │  │    ui     │ │  types   │ │  hooks  │ │ utils  │  │    │
-│  │  │ (zilpo)   │ │(naiera)  │ │(naiera) │ │(naiera)│  │    │
+│  │  │ (bandanaiera)   │ │(naiera)  │ │(naiera) │ │(naiera)│  │    │
 │  │  └───────────┘ └──────────┘ └─────────┘ └────────┘  │    │
 │  │  ┌───────────┐ ┌──────────┐                         │    │
 │  │  │  logger   │ │ rbac     │                         │    │
@@ -201,7 +201,7 @@ model File {
   category         FileCategory @default(OTHER)
 
   // Storage
-  bucketName  String  @default("zilpo-uploads")
+  bucketName  String  @default("bandanaiera-uploads")
   storagePath String
   cdnUrl      String?
 
@@ -263,7 +263,7 @@ packages/
 
 ```
 packages/
-├── ui/                   # zilpo UI components (shadcn/ui)
+├── ui/                   # bandanaiera UI components (shadcn/ui)
 ├── eslint-config/
 ├── typescript-config/
 ```
@@ -273,9 +273,9 @@ packages/
 ### Route Groups
 
 ```
-apps/web/app/
+apps/support/app/
 ├── (landing)/           # Public pages (unchanged)
-├── (auth)/              # Auth pages (zilpo UI + naiera logic)
+├── (auth)/              # Auth pages (bandanaiera UI + naiera logic)
 │   ├── sign-in/
 │   ├── sign-up/
 │   └── forgot-password/
@@ -290,11 +290,11 @@ apps/web/app/
 ### Feature Organization
 
 ```
-apps/web/features/
-├── auth/                # Keep zilpo UI, add naiera logic
+apps/support/features/
+├── auth/                # Keep bandanaiera UI, add naiera logic
 │   ├── components/
 │   └── lib/
-├── backoffice/          # Keep zilpo, add manage pages
+├── backoffice/          # Keep bandanaiera, add manage pages
 │   ├── components/
 │   │   ├── manage/      # NEW: user/role/permission tables
 │   │   └── ...
@@ -311,7 +311,7 @@ apps/web/features/
 ### NextAuth Configuration
 
 ```typescript
-// apps/web/lib/auth/config.ts
+// apps/support/lib/auth/config.ts
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -344,7 +344,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 ### RBAC Server
 
 ```typescript
-// apps/web/lib/rbac/permissions.ts
+// apps/support/lib/rbac/permissions.ts
 export async function requireAuth() {
   const session = await auth()
   if (!session?.user) redirect("/sign-in")
@@ -377,7 +377,7 @@ export function useCan() {
 ### File Upload Service
 
 ```typescript
-// apps/web/lib/services/file-service.ts
+// apps/support/lib/services/file-service.ts
 export async function uploadFile({ userId, file, category }) {
   // Generate storage key
   // Get presigned URL
@@ -389,7 +389,7 @@ export async function uploadFile({ userId, file, category }) {
 ## API Routes
 
 ```
-apps/web/app/api/
+apps/support/app/api/
 ├── auth/[...nextauth]/route.ts    # NextAuth handler
 ├── users/route.ts                  # GET list, POST create
 ├── users/[id]/route.ts             # GET, PATCH, DELETE
@@ -439,12 +439,12 @@ Key files to copy:
 - `packages/hooks/src/` — React hooks
 - `packages/utils/src/` — Utilities
 - `packages/logger/src/` — Logger
-- `apps/backoffice/lib/auth/` — Auth configuration
-- `apps/backoffice/lib/rbac-server/` — RBAC server
-- `apps/backoffice/lib/rbac-client/` — RBAC client
-- `apps/backoffice/lib/services/` — Service layer
-- `apps/backoffice/features/rbac/` — RBAC components
-- `apps/backoffice/features/file-upload/` — Upload components
+- `apps/naiera-support/lib/auth/` — Auth configuration
+- `apps/naiera-support/lib/rbac-server/` — RBAC server
+- `apps/naiera-support/lib/rbac-client/` — RBAC client
+- `apps/naiera-support/lib/services/` — Service layer
+- `apps/naiera-support/features/rbac/` — RBAC components
+- `apps/naiera-support/features/file-upload/` — Upload components
 
 ---
 

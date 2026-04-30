@@ -88,7 +88,7 @@ export function SiteHeader() {
             </svg>
           </div>
           <span className="font-heading text-lg font-semibold tracking-tight">
-            zilpo
+            bandanaiera
           </span>
         </Link>
 

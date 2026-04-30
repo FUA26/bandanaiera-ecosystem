@@ -6,7 +6,7 @@
 
 ## Overview
 
-Comprehensive documentation for Zilpo Admin project covering Docker setup, troubleshooting, and development workflow. Designed to be the single source of truth for onboarding new developers and serving as a reference for existing team members.
+Comprehensive documentation for Bandanaiera Admin project covering Docker setup, troubleshooting, and development workflow. Designed to be the single source of truth for onboarding new developers and serving as a reference for existing team members.
 
 ## Goals
 
@@ -77,21 +77,21 @@ Issues grouped by symptom rather than tool:
 
 ### Files Created
 
-| File                     | Purpose                      |
-| ------------------------ | ---------------------------- |
-| `docs/SETUP.md`          | Main documentation           |
-| `docker-compose.yml`     | PostgreSQL + MinIO services  |
-| `docker-compose.dev.yml` | Optional app container       |
-| `apps/web/Dockerfile`    | Production build             |
-| `.env.docker.example`    | Docker-specific env template |
-| `.dockerignore`          | Build optimization           |
+| File                      | Purpose                      |
+| ------------------------- | ---------------------------- |
+| `docs/SETUP.md`           | Main documentation           |
+| `docker-compose.yml`      | PostgreSQL + MinIO services  |
+| `docker-compose.dev.yml`  | Optional app container       |
+| `apps/support/Dockerfile` | Production build             |
+| `.env.docker.example`     | Docker-specific env template |
+| `.dockerignore`           | Build optimization           |
 
 ### Key Configurations
 
 **PostgreSQL Service:**
 
 - Port: 5432
-- Credentials: zilpo/zilpo123
+- Credentials: bandanaiera/bandanaiera123
 - Healthcheck enabled
 - Persistent volume
 
@@ -110,11 +110,11 @@ Issues grouped by symptom rather than tool:
 
 ### Default Credentials
 
-| Service    | Username        | Password      |
-| ---------- | --------------- | ------------- |
-| App Admin  | admin@pisky.dev | admin123      |
-| PostgreSQL | zilpo           | zilpo123      |
-| MinIO      | minioadmin      | minioadmin123 |
+| Service    | Username        | Password       |
+| ---------- | --------------- | -------------- |
+| App Admin  | admin@pisky.dev | admin123       |
+| PostgreSQL | bandanaiera     | bandanaiera123 |
+| MinIO      | minioadmin      | minioadmin123  |
 
 ## Success Criteria
 

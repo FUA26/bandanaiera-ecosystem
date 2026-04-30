@@ -34,4 +34,4 @@ In production, logs are formatted for log aggregation services.
 
 ## See Also
 
-- `apps/backoffice/lib/logger.ts` - App-specific logger configuration
+- `apps/naiera-support/lib/logger.ts` - App-specific logger configuration

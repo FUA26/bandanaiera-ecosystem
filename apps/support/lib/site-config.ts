@@ -6,18 +6,18 @@
 export const siteConfig = {
   // Project URLs
   github: {
-    url: "https://github.com/yourorg/zilpo",
-    repository: "yourorg/zilpo",
+    url: "https://github.com/yourorg/bandanaiera",
+    repository: "yourorg/bandanaiera",
   },
   twitter: {
-    url: "https://twitter.com/zilpo",
-    handle: "@zilpo",
+    url: "https://twitter.com/bandanaiera",
+    handle: "@bandanaiera",
   },
   docs: {
     url: "/docs",
   },
   // Project metadata
-  name: "zilpo",
+  name: "bandanaiera",
   description:
     "Skip the boilerplate. Ship features faster with production-ready patterns.",
   // Navigation

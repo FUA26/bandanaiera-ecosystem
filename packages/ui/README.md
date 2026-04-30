@@ -1,6 +1,6 @@
 # `@workspace/ui`
 
-Shared UI component library for the Zilpo Admin workspace. Built with shadcn/ui, Radix UI primitives, and Tailwind CSS v4.
+Shared UI component library for the Bandanaiera Admin workspace. Built with shadcn/ui, Radix UI primitives, and Tailwind CSS v4.
 
 ## Installation
 

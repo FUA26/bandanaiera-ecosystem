@@ -1,6 +1,6 @@
-# Zilpo Admin
+# Bandanaiera
 
-A modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monorepo. Designed for developers who want to skip boilerplate and ship features quickly with production-ready patterns.
+A monorepo for the Bandanaiera ecosystem. It hosts multiple applications and shared packages, with `apps/naiera-support` as the standard app reference for shared conventions.
 
 ## Features
 
@@ -19,9 +19,10 @@ A modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monore
 ## Project Structure
 
 ```
-zilpo-admin/
+bandanaiera/
 ├── apps/
-│   └── support/                # Main Next.js application
+│   ├── support/                # Main Next.js application
+│   └── naiera-support/         # Standard app for the Bandanaiera ecosystem
 │       ├── app/                # App Router routes
 │       │   ├── (auth)/         # Auth routes (sign-in, sign-up, etc.)
 │       │   ├── (landing)/      # Landing page

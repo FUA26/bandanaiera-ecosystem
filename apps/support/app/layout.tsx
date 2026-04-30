@@ -26,17 +26,17 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata = {
-  title: "Zilpo - Next.js SaaS Starter Template",
+  title: "Bandanaiera - Next.js SaaS Starter Template",
   description:
     "Ship faster with opinionated patterns. A modern Next.js 16 + React 16 SaaS starter template built with shadcn/ui.",
   keywords: ["Next.js", "SaaS", "starter", "template", "shadcn/ui"],
-  authors: [{ name: "Zilpo" }],
+  authors: [{ name: "Bandanaiera" }],
   openGraph: {
-    title: "Zilpo - Next.js SaaS Starter Template",
+    title: "Bandanaiera - Next.js SaaS Starter Template",
     description:
       "Ship faster with opinionated patterns. A modern Next.js 16 + React 16 SaaS starter template built with shadcn/ui.",
     type: "website",
-    url: "https://zilpo.dev",
+    url: "https://bandanaiera.dev",
   },
 }
 
