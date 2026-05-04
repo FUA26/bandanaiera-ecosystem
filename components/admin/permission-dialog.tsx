@@ -177,13 +177,9 @@ export function PermissionDialog({
 
   const isEditing = !!permission
 
-  const closeLabel = isEditing
-    ? "Close edit permission dialog"
-    : "Close create permission dialog"
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]" closeLabel={closeLabel}>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Edit Permission" : "Create New Permission"}
