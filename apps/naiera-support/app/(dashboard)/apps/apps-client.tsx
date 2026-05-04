@@ -146,7 +146,7 @@ export function AppsClient() {
   }, [data, search])
 
   const visibleApps = useMemo(() => {
-    const apps = filteredApps.filter((app) => {
+    const apps = filteredApps.filter((app: App) => {
       if (statusFilter === "active") return app.isActive
       if (statusFilter === "inactive") return !app.isActive
       return true

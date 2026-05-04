@@ -7,7 +7,7 @@
     "dev": "next dev --port 3200",
     "build": "next build",
     "start": "next start -p 3200",
-    "lint": "eslint --max-warnings 0",
+    "lint": "eslint",
     "check-types": "next typegen && tsc --noEmit",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",

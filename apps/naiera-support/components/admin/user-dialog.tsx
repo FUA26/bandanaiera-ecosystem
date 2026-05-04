@@ -126,12 +126,9 @@ export function UserDialog({
     }
   }
 
-  const closeLabel =
-    mode === "create" ? "Close create user dialog" : "Close edit user dialog"
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]" closeLabel={closeLabel}>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Create New User" : "Edit User"}

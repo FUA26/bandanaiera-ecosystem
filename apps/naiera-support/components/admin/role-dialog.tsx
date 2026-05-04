@@ -86,13 +86,6 @@ export function RoleDialog({
     }
   }
 
-  const closeLabel =
-    mode === "create"
-      ? "Close create role dialog"
-      : mode === "clone"
-        ? "Close clone role dialog"
-        : "Close edit role dialog"
-
   async function handleSubmit(
     data:
       | { name: string; description?: string; permissions?: string[] }
@@ -149,7 +142,6 @@ export function RoleDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]"
-        closeLabel={closeLabel}
         onOpenAutoFocus={(event) => {
           // Focus first input when dialog opens
           event.preventDefault()

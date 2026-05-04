@@ -1,5 +1,5 @@
-export type { ButtonProps } from "./components/button"
-export { Button } from "./components/button"
+export type { ButtonProps } from "./components/button.js"
+export { Button } from "./components/button.js"
 export {
   Card,
   CardContent,
@@ -7,4 +7,4 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./components/card"
+} from "./components/card.js"
