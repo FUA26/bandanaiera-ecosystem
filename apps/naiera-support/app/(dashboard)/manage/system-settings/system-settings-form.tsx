@@ -95,7 +95,7 @@ export function SystemSettingsForm() {
       emailVerificationExpiryHours: 24,
       minPasswordLength: 8,
       requireStrongPassword: false,
-      siteName: "Bandanaiera Admin",
+      siteName: "Sonar Support",
       siteDescription: "",
       siteLogoId: "",
       siteSubtitle: "",
@@ -488,7 +488,7 @@ export function SystemSettingsForm() {
                 <Field>
                   <FieldLabel htmlFor="citizenName">Citizen Name</FieldLabel>
                   <FieldDescription>
-                    What to call citizens in greetings (e.g., "Bandanaiera Admin
+                    What to call people in greetings (e.g., "Sonar Support
                     users")
                   </FieldDescription>
                   <FieldContent>
@@ -721,7 +721,7 @@ export function SystemSettingsForm() {
                   <FieldContent>
                     <Input
                       id="copyrightText"
-                      placeholder="© 2026 Bandanaiera Admin"
+                      placeholder="© 2026 Sonar Support"
                       {...form.register("copyrightText")}
                     />
                   </FieldContent>

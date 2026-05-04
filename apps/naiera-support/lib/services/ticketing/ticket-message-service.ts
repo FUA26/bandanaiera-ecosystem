@@ -9,7 +9,7 @@
  * - Webhook triggers and notifications
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { SenderType, TicketStatus, ActivityAction } from "@prisma/client"
 import { addTicketActivity } from "./ticket-activity-service"
 import { triggerWebhook } from "./webhook-service"

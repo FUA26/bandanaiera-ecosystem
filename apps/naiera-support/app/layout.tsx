@@ -25,10 +25,10 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Bandanaiera Admin",
-    template: "%s | Bandanaiera Admin",
+    default: "Sonar Support",
+    template: "%s | Sonar Support",
   },
-  description: "Bandanaiera Admin dashboard for support and operations",
+  description: "Sonar Support dashboard for support and operations",
   icons: {
     icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
     apple: "/logo.svg",

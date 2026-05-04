@@ -16,7 +16,7 @@ import {
   createTicketSchema,
 } from "@/lib/validations/ticket-validation"
 import { createTicket } from "@/lib/services/ticketing/ticket-service"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { requireAuth } from "@/lib/auth/permissions"
 import { verifyAccessToken } from "@/lib/services/ticketing/integration-service"
 

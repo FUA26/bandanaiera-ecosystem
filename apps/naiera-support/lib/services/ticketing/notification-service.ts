@@ -9,7 +9,7 @@
  * In production, this would integrate with email, SMS, push notifications, etc.
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 
 /**
  * Notify agents that a new ticket has been created

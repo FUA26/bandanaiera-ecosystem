@@ -1,154 +1,200 @@
-# Database Setup Guide
+# Database Setup Guide for naiera-support
+
+Panduan ini menjelaskan setup database PostgreSQL untuk app `naiera-support`.
 
 ## Prerequisites
 
-1. PostgreSQL database running (Docker or native)
-2. Node.js and pnpm installed
+- PostgreSQL tersedia
+- Node.js dan pnpm terpasang
+- Dependency project sudah di-install
 
-## Quick Setup
+## Quick setup
 
-### 1. Create Database
+### 1. Buat database
+
+Contoh nama database:
 
 ```bash
-# If using Docker
-docker exec -i naiera-postgres psql -U naiera -d postgres -c "CREATE DATABASE backoffice_db;"
-
-# If using native PostgreSQL
-createdb backoffice_db
+createdb naiera_support
 ```
 
-### 2. Configure Environment
+Atau jika memakai Docker/Postgres container:
 
-Copy `.env.example` to `.env.local` and update:
+```bash
+docker exec -i naiera-postgres psql -U naiera -d postgres -c "CREATE DATABASE naiera_support;"
+```
+
+### 2. Siapkan environment
+
+Buat `.env.local` dan isi minimal:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db"
+DATABASE_URL="postgresql://user:password@localhost:5432/naiera_support"
 NEXTAUTH_SECRET="your-secret-key-here"
-NEXTAUTH_URL="http://localhost:3001"
+NEXT_PUBLIC_APP_URL="http://localhost:3200"
+MINIO_ACCESS_KEY="minio"
+MINIO_SECRET_KEY="miniosecret"
 ```
 
-### 3. Run Migrations
+Catatan:
+
+- default app port dari `package.json` adalah **3200**
+- validasi env lengkap ada di `lib/env.ts`
+
+### 3. Jalankan migration / push schema
+
+Untuk development:
 
 ```bash
-# Apply all migrations
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx prisma migrate deploy
-
-# Or for development (creates migrations)
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx prisma migrate dev
+pnpm db:migrate
 ```
 
-### 4. Seed Data
+Jika hanya ingin mendorong schema tanpa migration file:
 
 ```bash
-# Seed permissions (32 permissions)
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx tsx prisma/seed-permissions.ts
-
-# Seed roles (5 roles: ADMIN, EDITOR, MODERATOR, USER, VIEWER)
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx tsx prisma/seed-roles.ts
-
-# Seed system settings
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx tsx prisma/seed-system-settings.ts
-
-# Create admin user (admin@example.com / admin123)
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx tsx prisma/seed-admin.ts
+pnpm db:push
 ```
 
-## Migrations
-
-### Applied Migrations
-
-1. **20250211000000_init** - Initial schema
-2. **20260211230000_add_password_reset_fields** - Password reset functionality
-3. **20260211234111_add_profile_fields** - User profile fields
-4. **20260212140934_add_system_settings** - System settings table
-5. **20260224120000_add_file_columns_and_enums** - File upload schema
-
-### Creating New Migrations
+### 4. Seed data dasar
 
 ```bash
-# Development (creates migration file)
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx prisma migrate dev --name migration_name
-
-# Production (applies existing migrations)
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx prisma migrate deploy
+pnpm db:seed
 ```
 
-## Database Schema
+Perintah ini akan menjalankan:
 
-### Key Tables
+- `prisma/seed-permissions.ts`
+- `prisma/seed-roles.ts`
+- `prisma/seed-system-settings.ts`
+- `prisma/seed-admin.ts`
 
-#### User
+### 5. Optional: seed fresh atau ticketing sample
 
-- Authentication and user data
-- Role-based access control
-- Avatar support via File relation
-
-#### Role
-
-- 5 default roles: ADMIN, EDITOR, MODERATOR, USER, VIEWER
-- Permission-based access
-
-#### Permission
-
-- 32 granular permissions
-- Organized by category
-
-#### File
-
-- File upload tracking
-- Support for images, documents, videos, audio, archives
-- S3/MinIO integration ready
-- Soft delete support
-
-## Default Admin Account
-
+```bash
+pnpm db:seed:fresh
+pnpm db:seed:ticketing
 ```
-Email: admin@example.com
-Password: admin123
-Role: ADMIN
+
+## Prisma schema
+
+Schema utama berada di:
+
+```text
+prisma/schema.prisma
 ```
+
+Domain utama di schema ini:
+
+- auth / users / roles / permissions
+- system settings dan branding
+- ticketing
+- task management
+- file storage metadata
+- app access / multi-tenant support
+
+## Model penting
+
+### User / Role / Permission
+
+Dipakai untuk authentication, authorization, dan RBAC.
+
+### App / Channel / Ticket
+
+Dipakai untuk domain support multi-app dan multi-channel.
+
+### Task / TaskComment / TaskActivity
+
+Dipakai untuk tindak lanjut internal via task board / kanban.
+
+### File
+
+Dipakai untuk metadata file upload yang disimpan di MinIO/S3-compatible storage.
+
+## Default seed behavior
+
+Seed default akan membuat baseline untuk:
+
+- permission
+- role
+- system settings
+- admin user
+
+Karena isi seed bisa berubah seiring evolusi produk, cek file berikut untuk nilai final:
+
+- `prisma/seed-admin.ts`
+- `prisma/seed-system-settings.ts`
+- `prisma/seed-roles.ts`
+- `prisma/seed-permissions.ts`
+
+## Perintah berguna
+
+```bash
+pnpm db:studio
+pnpm db:reset
+pnpm db:push
+pnpm db:migrate
+pnpm db:seed
+```
+
+## Reset database
+
+Jika ingin reset total di development:
+
+```bash
+pnpm db:reset
+```
+
+Jika database perlu dibuat ulang manual:
+
+```bash
+docker exec -i naiera-postgres psql -U naiera -d postgres -c "DROP DATABASE IF EXISTS naiera_support;"
+docker exec -i naiera-postgres psql -U naiera -d postgres -c "CREATE DATABASE naiera_support;"
+```
+
+Lalu jalankan lagi:
+
+```bash
+pnpm db:migrate
+pnpm db:seed
+```
+
+## Regenerate Prisma client
+
+```bash
+npx prisma generate
+```
+
+Atau dari workflow normal, Prisma client biasanya ikut terpakai otomatis saat command Prisma dijalankan.
 
 ## Troubleshooting
 
-### Reset Database
+### Env invalid saat startup
 
-```bash
-# Drop and recreate database
-docker exec -i naiera-postgres psql -U naiera -d postgres -c "DROP DATABASE IF EXISTS backoffice_db;"
-docker exec -i naiera-postgres psql -U naiera -d postgres -c "CREATE DATABASE backoffice_db;"
+Periksa `lib/env.ts` karena semua env divalidasi via Zod. Jika ada field wajib belum diisi, app akan gagal start.
 
-# Re-run migrations and seeds
-./scripts/setup-db.sh
-```
+### File upload gagal
 
-### Regenerate Prisma Client
+Pastikan env storage tersedia:
 
-```bash
-DATABASE_URL="postgresql://user:password@localhost:5432/backoffice_db" npx prisma generate
-```
+- `MINIO_ENDPOINT`
+- `MINIO_PORT`
+- `MINIO_ACCESS_KEY`
+- `MINIO_SECRET_KEY`
+- `MINIO_BUCKET`
 
-### View Database
+### Auth flow gagal
 
-```bash
-# Using psql
-docker exec -it naiera-postgres psql -U naiera -d backoffice_db
+Pastikan minimal env berikut valid:
 
-# List tables
-\dt
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXT_PUBLIC_APP_URL`
 
-# Describe table
-\d "User"
+## Catatan
 
-# Quit
-\q
-```
+Dokumen ini sengaja memakai istilah dan port yang sesuai dengan `naiera-support` saat ini. Bila ada perubahan naming produk atau port lokal, sinkronkan juga:
 
-## File Categories
-
-- `AVATAR` - User profile pictures
-- `IMAGE` - General images
-- `DOCUMENT` - PDF, Word, etc.
-- `VIDEO` - Video files
-- `AUDIO` - Audio files
-- `ARCHIVE` - Compressed files
-- `OTHER` - Other file types
+- `README.md`
+- `package.json`
+- `lib/env.ts`
+- seed system settings

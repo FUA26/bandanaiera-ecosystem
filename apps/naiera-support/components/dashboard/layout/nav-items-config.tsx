@@ -24,7 +24,7 @@ export interface NavItem {
 }
 
 /**
- * Navigation items configuration for Bandanaiera Admin dashboard.
+ * Navigation items configuration for the Sonar Support dashboard.
  * Items are filtered based on user permissions via the NavMain component.
  */
 export const navItemsConfig: NavItem[] = [

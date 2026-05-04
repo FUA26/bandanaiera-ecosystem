@@ -51,7 +51,7 @@ export default function AppIdentityDemoPage() {
       {/* Page Header with Breadcrumb */}
       <PageHeaderWithIdentity
         title="App Identity Demo"
-        description="Visual demonstration of Bandanaiera Admin's unique identity within the ecosystem"
+        description="Visual demonstration of Sonar Support's unique identity within the ecosystem"
         actions={
           <AppButton>
             <Settings className="size-4" />

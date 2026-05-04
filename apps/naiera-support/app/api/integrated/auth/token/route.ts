@@ -3,7 +3,7 @@
  * POST /api/integrated/auth/token
  *
  * Generates a signed JWT token for external app integration.
- * The token allows external apps to securely access backoffice pages.
+ * The token allows external apps to securely access integrated support pages.
  *
  * Rate limiting: 10 requests per minute per channel slug
  *

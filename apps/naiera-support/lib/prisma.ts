@@ -1,22 +1,8 @@
 /**
- * Prisma Client Singleton
+ * Legacy Prisma entrypoint.
  *
- * Ensures only one instance of Prisma Client is used
- * throughout the application to prevent connection exhaustion.
+ * Keep this file as a compatibility shim while older imports are being removed.
+ * Use `@/lib/db/prisma` for all new imports.
  */
 
-import { PrismaClient } from "@prisma/client"
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-  })
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma
-}
+export { prisma } from "@/lib/db/prisma"

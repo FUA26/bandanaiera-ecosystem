@@ -8,7 +8,7 @@
  * @pattern docs/patterns/activity-logs.md
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import type { TaskActivityAction } from "@prisma/client"
 
 // ============================================================================

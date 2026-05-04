@@ -8,7 +8,7 @@ import { AuthPageShell } from "@/components/auth/auth-page-shell"
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form"
 
 export const metadata = {
-  title: "Lupa Kata Sandi - Bandanaiera Admin",
+  title: "Lupa Kata Sandi - Sonar Support",
   description: "Kirim tautan reset kata sandi",
 }
 

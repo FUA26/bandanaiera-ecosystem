@@ -21,7 +21,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { verifyAccessToken } from "@/lib/services/ticketing/integration-service"
 import { addTicketMessage } from "@/lib/services/ticketing/ticket-message-service"
 import { SenderType } from "@prisma/client"

@@ -6,7 +6,7 @@
 
 import { requireAuth } from "@/lib/auth/permissions"
 import { taskCommentSchema } from "@/lib/validations/task"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { TaskActivityAction } from "@prisma/client"
 

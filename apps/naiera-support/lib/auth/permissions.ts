@@ -32,7 +32,7 @@
 import { auth } from "@/lib/auth/config"
 import { hasPermission } from "@/lib/rbac/checker"
 import { loadUserPermissions } from "@/lib/rbac-server/loader"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import {
   hasAnyAppAccess,
   hasUserAppAccess,

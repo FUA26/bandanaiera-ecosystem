@@ -8,7 +8,7 @@
  * @pattern docs/patterns/activity-logs.md
  */
 
-import { prisma } from "../../prisma"
+import { prisma } from "@/lib/db/prisma"
 import { Prisma } from "@prisma/client"
 import {
   CreateTicketInput,

@@ -13,7 +13,7 @@ import { Alert02Icon, LockPasswordIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 export const metadata = {
-  title: "Atur Ulang Kata Sandi - Bandanaiera Admin",
+  title: "Atur Ulang Kata Sandi - Sonar Support",
   description: "Buat kata sandi baru",
 }
 
