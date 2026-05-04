@@ -21,6 +21,7 @@ import {
   Copy,
   Check,
   Code,
+  X,
 } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -70,6 +71,7 @@ import { usePermissions } from "@/lib/rbac-client/provider"
 import { cn } from "@/lib/utils"
 import type {
   App,
+  AppTicketTypeOption,
   Channel,
   ChannelType,
   DeleteDialogState,
@@ -466,6 +468,12 @@ export function AppsClient() {
         onActiveChange={(isActive) =>
           appDialog.dispatchForm({ type: "SET_ACTIVE", isActive })
         }
+        onTicketTypesChange={(ticketTypes) =>
+          appDialog.dispatchForm({
+            type: "SET_TICKET_TYPES",
+            ticketTypes,
+          })
+        }
         isSaving={appMutations.isCreating || appMutations.isUpdating}
       />
 
@@ -663,6 +671,7 @@ function AppDialog({
   onSlugChange,
   onDescriptionChange,
   onActiveChange,
+  onTicketTypesChange,
   isSaving,
 }: {
   dialog: { open: boolean; mode: "create" | "edit" }
@@ -671,6 +680,7 @@ function AppDialog({
     slug: string
     description: string
     isActive: boolean
+    ticketTypes: AppTicketTypeOption[]
   }
   onOpenChange: (open: boolean) => void
   onSave: () => void
@@ -678,12 +688,37 @@ function AppDialog({
   onSlugChange: (slug: string) => void
   onDescriptionChange: (description: string) => void
   onActiveChange: (isActive: boolean) => void
+  onTicketTypesChange: (ticketTypes: AppTicketTypeOption[]) => void
   isSaving: boolean
 }) {
+  const updateTicketType = (
+    index: number,
+    key: keyof AppTicketTypeOption,
+    value: string
+  ) => {
+    const next = formData.ticketTypes.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [key]: value } : item
+    )
+    onTicketTypesChange(next)
+  }
+
+  const addTicketType = () => {
+    onTicketTypesChange([
+      ...formData.ticketTypes,
+      { id: "", label: "", description: "" },
+    ])
+  }
+
+  const removeTicketType = (index: number) => {
+    onTicketTypesChange(
+      formData.ticketTypes.filter((_, itemIndex) => itemIndex !== index)
+    )
+  }
+
   return (
     <Dialog open={dialog.open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[92vh] w-[calc(100vw-1.5rem)] max-w-3xl flex-col overflow-hidden p-0 sm:w-full">
+        <DialogHeader className="shrink-0 border-b px-4 py-4 sm:px-6">
           <DialogTitle>
             {dialog.mode === "create" ? "Create New App" : "Edit App"}
           </DialogTitle>
@@ -693,7 +728,7 @@ function AppDialog({
               : "Update the app details."}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+        <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-6">
           <div className="space-y-2">
             <Label htmlFor="appName">Name *</Label>
             <Input
@@ -740,15 +775,114 @@ function AppDialog({
               onCheckedChange={onActiveChange}
             />
           </div>
+          <div className="space-y-3 rounded-lg border p-3 sm:p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-0.5">
+                <Label>Ticket Types</Label>
+                <p className="text-xs text-muted-foreground">
+                  Tambahkan jenis tiket custom sesuai kebutuhan app. Data ini
+                  akan tampil di public support form dan tersimpan di database.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addTicketType}
+                className="w-full sm:w-auto"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Type
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {formData.ticketTypes.length === 0 ? (
+                <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+                  Belum ada jenis tiket. Tambahkan minimal satu.
+                </div>
+              ) : (
+                formData.ticketTypes.map((ticketType, index) => (
+                  <div
+                    key={`${ticketType.id}-${index}`}
+                    className="rounded-lg border border-border/70 p-3 sm:p-4"
+                  >
+                    <div className="mb-3 flex items-center justify-between gap-2">
+                      <div className="text-sm font-medium">
+                        Type #{index + 1}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeTicketType(index)}
+                        className="h-8 w-8 shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="grid gap-3">
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label>Type ID</Label>
+                          <Input
+                            value={ticketType.id}
+                            onChange={(e) =>
+                              updateTicketType(
+                                index,
+                                "id",
+                                e.target.value
+                                  .toLowerCase()
+                                  .replace(/[^a-z0-9-]/g, "-")
+                              )
+                            }
+                            placeholder="bug-report"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Label</Label>
+                          <Input
+                            value={ticketType.label}
+                            onChange={(e) =>
+                              updateTicketType(index, "label", e.target.value)
+                            }
+                            placeholder="Bug Report"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Description</Label>
+                        <Textarea
+                          value={ticketType.description ?? ""}
+                          onChange={(e) =>
+                            updateTicketType(
+                              index,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Deskripsi singkat yang tampil di form support"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="shrink-0 border-t px-4 py-4 sm:px-6">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
           <Button
             onClick={onSave}
             disabled={isSaving}
-            className="rounded-lg bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+            className="w-full rounded-lg bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
           >
             {isSaving
               ? "Saving..."

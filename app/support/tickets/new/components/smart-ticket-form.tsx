@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowLeft, HelpCircle, Info, Upload } from "lucide-react"
+import { ArrowLeft, Info, Upload } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
@@ -12,25 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-import { TicketType } from "@/lib/ticketing/ticket-types"
-import { getTicketTypeConfig } from "@/lib/ticketing/form-templates"
-import { BugReportTemplate } from "./form-templates/bug-report-template"
-import { FeatureRequestTemplate } from "./form-templates/feature-request-template"
-import { AccountIssueTemplate } from "./form-templates/account-issue-template"
-import { TechnicalSupportTemplate } from "./form-templates/technical-support-template"
-import { BillingInquiryTemplate } from "./form-templates/billing-inquiry-template"
-import { OtherInquiryTemplate } from "./form-templates/other-inquiry-template"
+import { Textarea } from "@workspace/ui/components/textarea"
+import type { AppTicketTypeOption } from "@/lib/types/apps"
 
 interface SmartTicketFormProps {
-  ticketType: TicketType
+  ticketType: AppTicketTypeOption
   subject: string
-  templateData: Record<string, string>
+  message: string
   priority: string
   requesterName: string
   requesterEmail: string
   requesterPhone: string
   onSubjectChange: (value: string) => void
-  onTemplateFieldChange: (field: string, value: string) => void
+  onMessageChange: (value: string) => void
   onPriorityChange: (value: string) => void
   onRequesterNameChange: (value: string) => void
   onRequesterEmailChange: (value: string) => void
@@ -42,40 +36,22 @@ interface SmartTicketFormProps {
   isSubmitting?: boolean
   errors?: {
     subject?: string
-    templateFields?: Record<string, string>
+    message?: string
     requesterName?: string
     requesterEmail?: string
   }
 }
 
-const SUBJECT_PREFIXES: Record<TicketType, string> = {
-  [TicketType.BUG_REPORT]: "[Bug]",
-  [TicketType.FEATURE_REQUEST]: "[Feature]",
-  [TicketType.ACCOUNT_ISSUE]: "[Account]",
-  [TicketType.TECHNICAL_SUPPORT]: "[Support]",
-  [TicketType.BILLING_INQUIRY]: "[Billing]",
-  [TicketType.OTHER_INQUIRY]: "[Inquiry]",
-}
-
-const SUBMIT_LABELS: Record<TicketType, string> = {
-  [TicketType.BUG_REPORT]: "Submit Bug Report",
-  [TicketType.FEATURE_REQUEST]: "Submit Feature Request",
-  [TicketType.ACCOUNT_ISSUE]: "Submit Account Issue",
-  [TicketType.TECHNICAL_SUPPORT]: "Request Support",
-  [TicketType.BILLING_INQUIRY]: "Submit Inquiry",
-  [TicketType.OTHER_INQUIRY]: "Send Message",
-}
-
 export function SmartTicketForm({
   ticketType,
   subject,
-  templateData,
+  message,
   priority,
   requesterName,
   requesterEmail,
   requesterPhone,
   onSubjectChange,
-  onTemplateFieldChange,
+  onMessageChange,
   onPriorityChange,
   onRequesterNameChange,
   onRequesterEmailChange,
@@ -87,14 +63,9 @@ export function SmartTicketForm({
   isSubmitting = false,
   errors,
 }: SmartTicketFormProps) {
-  const config = getTicketTypeConfig(ticketType)
-  if (!config) return null
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    if (files.length > 0) {
-      onFileUpload(files)
-    }
+    if (files.length > 0) onFileUpload(files)
   }
 
   return (
@@ -102,14 +73,13 @@ export function SmartTicketForm({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="w-full max-w-3xl space-y-8"
+      className="w-full max-w-3xl space-y-6 sm:space-y-8"
     >
-      {/* Header */}
       <div className="space-y-2">
         <Button
           variant="ghost"
           onClick={onBack}
-          className="gap-2 text-muted-foreground hover:text-foreground"
+          className="-ml-2 gap-2 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to type selection
@@ -117,40 +87,18 @@ export function SmartTicketForm({
 
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
-            {config.label}
+            {ticketType.label}
           </h2>
-          <p className="text-muted-foreground">{config.description}</p>
+          <p className="text-muted-foreground">
+            {ticketType.description?.trim() ||
+              "Provide the details below so the support team can help you faster."}
+          </p>
         </div>
       </div>
 
-      {/* Contextual Questions */}
-      {config.contextualQuestions.length > 0 && (
-        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
-          <div className="mb-3 flex items-center gap-2">
-            <HelpCircle className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">
-              Helpful Context to Include
-            </h3>
-          </div>
-          <ul className="space-y-2">
-            {config.contextualQuestions.map((question, index) => (
-              <li
-                key={index}
-                className="flex items-start gap-3 text-sm text-primary/90"
-              >
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/60" />
-                {question}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Form */}
       <div className="space-y-6">
-        {/* Subject */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <Label htmlFor="subject" className="text-sm font-medium">
               Subject <span className="text-destructive">*</span>
             </Label>
@@ -164,75 +112,37 @@ export function SmartTicketForm({
               {subject.length}/200
             </span>
           </div>
-          <div className="relative">
-            <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm text-muted-foreground">
-              {SUBJECT_PREFIXES[ticketType]}
-            </span>
-            <Input
-              id="subject"
-              value={subject}
-              onChange={(e) => onSubjectChange(e.target.value)}
-              placeholder="Brief initial context for your issue or request"
-              className="h-11 rounded-2xl border-border/70 bg-background/80 pl-24 shadow-sm"
-              required
-              maxLength={200}
-            />
-          </div>
+          <Input
+            id="subject"
+            value={subject}
+            onChange={(e) => onSubjectChange(e.target.value)}
+            placeholder={`Brief summary for ${ticketType.label.toLowerCase()}`}
+            className="h-11 rounded-2xl border-border/70 bg-background/80 shadow-sm"
+            required
+            maxLength={200}
+          />
           {errors?.subject && (
             <p className="text-sm text-destructive">{errors.subject}</p>
           )}
         </div>
 
-        {/* Template Fields */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Initial Context</Label>
-          <div className="rounded-2xl border border-border/50 bg-card/50 p-6">
-            {ticketType === TicketType.BUG_REPORT && (
-              <BugReportTemplate
-                data={templateData}
-                onChange={onTemplateFieldChange}
-                errors={errors?.templateFields}
-              />
-            )}
-            {ticketType === TicketType.FEATURE_REQUEST && (
-              <FeatureRequestTemplate
-                data={templateData}
-                onChange={onTemplateFieldChange}
-                errors={errors?.templateFields}
-              />
-            )}
-            {ticketType === TicketType.ACCOUNT_ISSUE && (
-              <AccountIssueTemplate
-                data={templateData}
-                onChange={onTemplateFieldChange}
-                errors={errors?.templateFields}
-              />
-            )}
-            {ticketType === TicketType.TECHNICAL_SUPPORT && (
-              <TechnicalSupportTemplate
-                data={templateData}
-                onChange={onTemplateFieldChange}
-                errors={errors?.templateFields}
-              />
-            )}
-            {ticketType === TicketType.BILLING_INQUIRY && (
-              <BillingInquiryTemplate
-                data={templateData}
-                onChange={onTemplateFieldChange}
-                errors={errors?.templateFields}
-              />
-            )}
-            {ticketType === TicketType.OTHER_INQUIRY && (
-              <OtherInquiryTemplate
-                data={templateData}
-                onChange={onTemplateFieldChange}
-                errors={errors?.templateFields}
-              />
-            )}
-          </div>
+          <Label htmlFor="message" className="text-sm font-medium">
+            Details <span className="text-destructive">*</span>
+          </Label>
+          <Textarea
+            id="message"
+            value={message}
+            onChange={(e) => onMessageChange(e.target.value)}
+            placeholder="Describe the issue, request, or context in as much detail as possible..."
+            rows={8}
+            className="min-h-40 rounded-2xl border-border/70 bg-background/80 shadow-sm"
+          />
+          {errors?.message && (
+            <p className="text-sm text-destructive">{errors.message}</p>
+          )}
         </div>
 
-        {/* Priority */}
         <div className="space-y-2">
           <Label htmlFor="priority" className="text-sm font-medium">
             Priority <span className="text-destructive">*</span>
@@ -254,8 +164,7 @@ export function SmartTicketForm({
           </Select>
         </div>
 
-        {/* Requester Info */}
-        <div className="space-y-4 rounded-2xl border border-border/50 bg-card/50 p-6">
+        <div className="space-y-4 rounded-2xl border border-border/50 bg-card/50 p-4 sm:p-6">
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 text-muted-foreground" />
             <h3 className="font-medium text-foreground">Contact Information</h3>
@@ -322,9 +231,9 @@ export function SmartTicketForm({
               Attachments{" "}
               <span className="text-muted-foreground">(optional)</span>
             </Label>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <label htmlFor="attachments">
-                <div className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors hover:border-border">
+                <div className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors hover:border-border">
                   <Upload className="h-4 w-4 text-muted-foreground" />
                   <span>Upload files</span>
                 </div>
@@ -343,13 +252,12 @@ export function SmartTicketForm({
           </div>
         )}
 
-        {/* Submit */}
         <Button
           onClick={onSubmit}
           disabled={isSubmitting}
           className="h-11 w-full rounded-2xl text-base font-medium"
         >
-          {isSubmitting ? "Submitting..." : SUBMIT_LABELS[ticketType]}
+          {isSubmitting ? "Submitting..." : `Submit ${ticketType.label}`}
         </Button>
       </div>
     </motion.div>

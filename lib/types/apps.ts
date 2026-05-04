@@ -6,6 +6,16 @@
 
 import type { LucideIcon } from "lucide-react"
 
+export interface AppTicketTypeOption {
+  id: string
+  label: string
+  description?: string
+}
+
+export interface AppTicketingConfig {
+  ticketTypes?: AppTicketTypeOption[]
+}
+
 /** App entity */
 export interface App {
   id: string
@@ -13,6 +23,7 @@ export interface App {
   slug: string
   description: string | null
   isActive: boolean
+  config?: AppTicketingConfig | null
   createdAt: string
   channels: Channel[]
   _count: {
@@ -80,6 +91,7 @@ export interface AppFormData {
   slug: string
   description: string
   isActive: boolean
+  ticketTypes: AppTicketTypeOption[]
 }
 
 export interface ChannelFormData {
@@ -94,6 +106,7 @@ export interface CreateAppPayload {
   slug?: string
   description?: string
   isActive?: boolean
+  config?: AppTicketingConfig
 }
 
 export interface UpdateAppPayload {
@@ -101,6 +114,7 @@ export interface UpdateAppPayload {
   slug?: string
   description?: string
   isActive?: boolean
+  config?: AppTicketingConfig
 }
 
 export interface CreateChannelPayload {

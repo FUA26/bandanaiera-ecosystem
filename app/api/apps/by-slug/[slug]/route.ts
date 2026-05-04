@@ -27,6 +27,7 @@ export async function GET(
       name: app.name,
       slug: app.slug,
       description: app.description,
+      config: app.config,
     })
   } catch (error) {
     console.error("Error fetching app by slug:", error)

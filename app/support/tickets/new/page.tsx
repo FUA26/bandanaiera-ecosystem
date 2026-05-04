@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, Suspense, useEffect, type ReactNode } from "react"
+import { useState, Suspense, useEffect, useMemo, type ReactNode } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { TicketType } from "@/lib/ticketing/ticket-types"
-import { getTicketTypeConfig } from "@/lib/ticketing/form-templates"
+import type { AppTicketTypeOption } from "@/lib/types/apps"
 import { TicketTypeSelector } from "./components/ticket-type-selector"
 import { SmartTicketForm } from "./components/smart-ticket-form"
 import { SuccessState } from "./components/success-state"
@@ -17,8 +16,12 @@ interface TokenData {
 }
 
 type AppInfo = {
+  id?: string
   name?: string
   slug?: string
+  config?: {
+    ticketTypes?: AppTicketTypeOption[]
+  } | null
 }
 
 type UploadedAttachment = {
@@ -37,12 +40,9 @@ function TicketForm() {
   const embed = searchParams.get("embed") === "true"
   const tokenParam = searchParams.get("token")
 
-  // Form state
-  const [selectedType, setSelectedType] = useState<TicketType | null>(null)
+  const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null)
   const [subject, setSubject] = useState("")
-  const [templateFields, setTemplateFields] = useState<Record<string, string>>(
-    {}
-  )
+  const [message, setMessage] = useState("")
   const [priority, setPriority] = useState("NORMAL")
   const [requesterInfo, setRequesterInfo] = useState({
     name: "",
@@ -51,7 +51,6 @@ function TicketForm() {
   })
   const [attachments, setAttachments] = useState<File[]>([])
 
-  // UI state
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,13 +61,24 @@ function TicketForm() {
   const [createdTicketId, setCreatedTicketId] = useState<string | null>(null)
   const [validationErrors, setValidationErrors] = useState<{
     subject?: string
-    templateFields?: Record<string, string>
+    message?: string
     requesterName?: string
     requesterEmail?: string
   }>({})
-  const attachmentsEnabled = Boolean(tokenValid && tokenParam)
 
-  // Validate token and get app info (existing logic)
+  const attachmentsEnabled = Boolean(tokenValid && tokenParam)
+  const availableTicketTypes = useMemo(
+    () =>
+      appInfo?.config?.ticketTypes?.filter((item) => item.id && item.label) ??
+      [],
+    [appInfo]
+  )
+  const selectedTicketType = useMemo(
+    () =>
+      availableTicketTypes.find((item) => item.id === selectedTypeId) ?? null,
+    [availableTicketTypes, selectedTypeId]
+  )
+
   useEffect(() => {
     const validateTokenAndGetInfo = async () => {
       if (!tokenParam) return
@@ -122,18 +132,13 @@ function TicketForm() {
     }
   }, [appSlug])
 
-  // Handle type selection
-  const handleTypeSelect = (type: TicketType) => {
-    setSelectedType(type)
-    const config = getTicketTypeConfig(type)
-    setPriority(config?.defaultPriority || "NORMAL")
-
-    // Clear previous template fields
-    setTemplateFields({})
+  const handleTypeSelect = (typeId: string) => {
+    setSelectedTypeId(typeId)
+    setPriority("NORMAL")
     setSubject("")
+    setMessage("")
     setValidationErrors({})
 
-    // Scroll to form
     setTimeout(() => {
       document
         .getElementById("ticket-form")
@@ -141,16 +146,30 @@ function TicketForm() {
     }, 100)
   }
 
-  // Handle form submission
+  useEffect(() => {
+    if (
+      selectedTypeId &&
+      availableTicketTypes.length > 0 &&
+      !availableTicketTypes.some((item) => item.id === selectedTypeId)
+    ) {
+      setSelectedTypeId(null)
+      setSubject("")
+      setMessage("")
+    }
+  }, [availableTicketTypes, selectedTypeId])
+
   const handleSubmit = async () => {
     setError(null)
     setValidationErrors({})
 
-    // Validate
     const errors: typeof validationErrors = {}
 
     if (!subject || subject.length < 5) {
       errors.subject = "Subject must be at least 5 characters"
+    }
+
+    if (!message || message.length < 20) {
+      errors.message = "Details must be at least 20 characters"
     }
 
     if (!requesterInfo.email) {
@@ -159,36 +178,6 @@ function TicketForm() {
 
     if (!requesterInfo.name) {
       errors.requesterName = "Name is required"
-    }
-
-    // Validate required template fields
-    if (selectedType) {
-      const config = getTicketTypeConfig(selectedType)
-      const templateErrors: Record<string, string> = {}
-
-      config?.fields.forEach((field) => {
-        const fieldValue = templateFields[field.name]
-
-        if (field.required) {
-          // For select fields, just check if a value is present
-          if (field.type === "select") {
-            if (!fieldValue) {
-              templateErrors[field.name] = `${field.label} is required`
-            }
-          } else {
-            // For text/textarea fields, check minimum length
-            const minLength = field.minLength ?? 0
-            if (!fieldValue || fieldValue.length < minLength) {
-              templateErrors[field.name] =
-                `${field.label} is required and must be at least ${minLength} characters`
-            }
-          }
-        }
-      })
-
-      if (Object.keys(templateErrors).length > 0) {
-        errors.templateFields = templateErrors
-      }
     }
 
     if (Object.keys(errors).length > 0) {
@@ -239,9 +228,9 @@ function TicketForm() {
           token: tokenParam,
           appSlug,
           channelType: tokenValid ? undefined : "WEB_FORM",
-          ticketType: selectedType,
+          ticketType: selectedTypeId,
           subject,
-          message: buildInitialContextBody(selectedType, templateFields),
+          message,
           priority,
           guestEmail: requesterInfo.email || undefined,
           guestName: requesterInfo.name || undefined,
@@ -249,7 +238,8 @@ function TicketForm() {
           attachments:
             uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
           metadata: {
-            templateFields,
+            ticketTypeLabel: selectedTicketType?.label,
+            ticketTypeDescription: selectedTicketType?.description,
           },
         }),
       })
@@ -273,28 +263,10 @@ function TicketForm() {
     }
   }
 
-  const buildInitialContextBody = (
-    type: TicketType | null,
-    fields: Record<string, string>
-  ): string => {
-    if (!type) return ""
-
-    const config = getTicketTypeConfig(type)
-    let message = ""
-
-    config?.fields.forEach((field) => {
-      if (fields[field.name]) {
-        message += `**${field.label}:**\n${fields[field.name]}\n\n`
-      }
-    })
-
-    return message.trim()
-  }
-
   const resetForm = () => {
-    setSelectedType(null)
+    setSelectedTypeId(null)
     setSubject("")
-    setTemplateFields({})
+    setMessage("")
     setPriority("NORMAL")
     setRequesterInfo({ name: "", email: tokenData?.email || "", phone: "" })
     setAttachments([])
@@ -373,25 +345,28 @@ function TicketForm() {
         </div>
       )}
 
-      {!selectedType ? (
+      {availableTicketTypes.length === 0 ? (
+        <div className="mx-auto max-w-3xl rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-900">
+          Belum ada ticket type yang dikonfigurasi untuk app ini.
+        </div>
+      ) : !selectedTicketType ? (
         <TicketTypeSelector
-          selectedType={selectedType}
+          selectedType={selectedTypeId}
+          availableTypes={availableTicketTypes}
           onSelectType={handleTypeSelect}
         />
       ) : (
         <div id="ticket-form" className="mx-auto max-w-3xl">
           <SmartTicketForm
-            ticketType={selectedType}
+            ticketType={selectedTicketType}
             subject={subject}
-            templateData={templateFields}
+            message={message}
             priority={priority}
             requesterName={requesterInfo.name}
             requesterEmail={requesterInfo.email}
             requesterPhone={requesterInfo.phone}
             onSubjectChange={setSubject}
-            onTemplateFieldChange={(field, value) =>
-              setTemplateFields((prev) => ({ ...prev, [field]: value }))
-            }
+            onMessageChange={setMessage}
             onPriorityChange={setPriority}
             onRequesterNameChange={(value) =>
               setRequesterInfo((prev) => ({ ...prev, name: value }))
@@ -404,7 +379,7 @@ function TicketForm() {
             }
             onFileUpload={(files) => setAttachments(files)}
             attachmentsEnabled={attachmentsEnabled}
-            onBack={() => setSelectedType(null)}
+            onBack={() => setSelectedTypeId(null)}
             onSubmit={handleSubmit}
             isSubmitting={loading}
             errors={validationErrors}

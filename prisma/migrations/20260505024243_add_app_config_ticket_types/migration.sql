@@ -1,0 +1,1 @@
+ALTER TABLE "App" ADD COLUMN "config" JSONB;
