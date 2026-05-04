@@ -31,7 +31,14 @@ export interface CreateTicketInput {
     name?: string
     phone?: string
   }
-  attachments?: Array<{ url: string; name: string; type: string; size: number }>
+  attachments?: Array<{
+    id?: string
+    fileId?: string
+    url: string
+    name: string
+    type: string
+    size: number
+  }>
   createdBy?: string
   externalUserId?: string // For integrated app customers
   ticketType?: string // Ticket type (e.g., BUG_REPORT, FEATURE_REQUEST)
@@ -75,6 +82,7 @@ export interface TicketMetadata extends Record<string, unknown> {
   ticketType?: string
   templateFields?: Record<string, string>
   initialContextVersion?: 1
+  attachments?: TicketAttachment[]
 }
 
 export interface TicketRequesterSnapshot {

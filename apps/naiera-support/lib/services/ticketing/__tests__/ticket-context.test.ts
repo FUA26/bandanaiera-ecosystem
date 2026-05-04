@@ -144,6 +144,42 @@ describe("splitTicketDetail", () => {
     ])
   })
 
+  it("includes attachment snapshots from metadata as part of the initial context", () => {
+    const result = splitTicketDetail({
+      ticket: {
+        ticketNumber: "NAIE-00007",
+        subject: "Metadata attachments",
+        description: "Body",
+        metadata: {
+          initialContextVersion: 1,
+          templateFields: {},
+          attachments: [
+            {
+              url: "https://cdn.example.com/context.pdf",
+              name: "context.pdf",
+              type: "application/pdf",
+              size: 4096,
+            },
+          ],
+        },
+        guestName: null,
+        guestEmail: null,
+        guestPhone: null,
+        attachments: [],
+      },
+      messages: [],
+    })
+
+    expect(result.initialContext.attachments).toEqual([
+      {
+        url: "https://cdn.example.com/context.pdf",
+        name: "context.pdf",
+        type: "application/pdf",
+        size: 4096,
+      },
+    ])
+  })
+
   it("falls back to safe attachment defaults when fields are empty strings", () => {
     const result = splitTicketDetail({
       ticket: {

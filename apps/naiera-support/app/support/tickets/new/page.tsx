@@ -8,7 +8,6 @@ import { TicketTypeSelector } from "./components/ticket-type-selector"
 import { SmartTicketForm } from "./components/smart-ticket-form"
 import { SuccessState } from "./components/success-state"
 import { LoadingState } from "./components/loading-state"
-import type { AttachmentFile } from "@/components/ticketing/attachment-upload"
 
 interface TokenData {
   email?: string
@@ -20,6 +19,14 @@ interface TokenData {
 type AppInfo = {
   name?: string
   slug?: string
+}
+
+type UploadedAttachment = {
+  id: string
+  url: string
+  name: string
+  type: string
+  size: number
 }
 
 function TicketForm() {
@@ -59,6 +66,7 @@ function TicketForm() {
     requesterName?: string
     requesterEmail?: string
   }>({})
+  const attachmentsEnabled = Boolean(tokenValid && tokenParam)
 
   // Validate token and get app info (existing logic)
   useEffect(() => {
@@ -190,15 +198,40 @@ function TicketForm() {
 
     setLoading(true)
 
-    // Convert File[] to AttachmentFile[] format for API
-    const attachmentMetadata = attachments.map((file) => ({
-      url: "", // Would be set after upload in a real implementation
-      name: file.name,
-      type: file.type,
-      size: file.size,
-    }))
-
     try {
+      let uploadedAttachments: UploadedAttachment[] = []
+
+      if (attachmentsEnabled && attachments.length > 0 && tokenParam) {
+        const formData = new FormData()
+        attachments.forEach((file) => {
+          formData.append("files", file)
+        })
+
+        const uploadRes = await fetch("/api/upload/ticket-attachment", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${tokenParam}`,
+          },
+          body: formData,
+        })
+
+        const uploadData = await uploadRes.json()
+
+        if (!uploadRes.ok) {
+          throw new Error(
+            uploadData.error || uploadData.message || "Failed to upload files"
+          )
+        }
+
+        uploadedAttachments = Array.isArray(uploadData.files)
+          ? uploadData.files
+          : []
+
+        if (uploadedAttachments.length !== attachments.length) {
+          throw new Error("Failed to upload all attachments")
+        }
+      }
+
       const res = await fetch("/api/public/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -208,13 +241,13 @@ function TicketForm() {
           channelType: tokenValid ? undefined : "WEB_FORM",
           ticketType: selectedType,
           subject,
-          message: buildMessageFromTemplate(selectedType, templateFields),
+          message: buildInitialContextBody(selectedType, templateFields),
           priority,
           guestEmail: requesterInfo.email || undefined,
           guestName: requesterInfo.name || undefined,
           guestPhone: requesterInfo.phone || undefined,
           attachments:
-            attachmentMetadata.length > 0 ? attachmentMetadata : undefined,
+            uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
           metadata: {
             templateFields,
           },
@@ -240,7 +273,7 @@ function TicketForm() {
     }
   }
 
-  const buildMessageFromTemplate = (
+  const buildInitialContextBody = (
     type: TicketType | null,
     fields: Record<string, string>
   ): string => {
@@ -328,8 +361,8 @@ function TicketForm() {
           </h1>
           <p className="text-base leading-7 text-muted-foreground">
             {appInfo
-              ? `Get help with ${appInfo.name}. Select your issue type below and we'll guide you through providing the right information.`
-              : "Select your issue type below and we'll guide you through providing the right information."}
+              ? `Get help with ${appInfo.name}. Select your issue type below and we'll guide you through providing the initial context.`
+              : "Select your issue type below and we'll guide you through providing the initial context."}
           </p>
         </header>
       )}
@@ -370,6 +403,7 @@ function TicketForm() {
               setRequesterInfo((prev) => ({ ...prev, phone: value }))
             }
             onFileUpload={(files) => setAttachments(files)}
+            attachmentsEnabled={attachmentsEnabled}
             onBack={() => setSelectedType(null)}
             onSubmit={handleSubmit}
             isSubmitting={loading}

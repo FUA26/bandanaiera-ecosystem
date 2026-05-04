@@ -156,7 +156,10 @@ export function splitTicketDetail<
           : undefined,
       templateFields: normalizeTemplateFields(input.ticket.metadata),
       requester: normalizeRequester(input.ticket),
-      attachments: normalizeAttachments(input.ticket.attachments),
+      attachments: normalizeAttachments([
+        ...(input.ticket.attachments || []),
+        ...(input.ticket.metadata?.attachments || []),
+      ]),
       source: structured ? "structured" : "legacy",
     },
     messages: structured

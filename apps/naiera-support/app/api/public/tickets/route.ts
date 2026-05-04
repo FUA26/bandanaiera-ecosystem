@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // For token-based creation, validate the core fields (subject, message, etc.)
+      // For token-based creation, validate the core fields (subject, initial context body, etc.)
       // Guest info and app/channel come from token
       const partialSchema = baseCreateTicketSchema.pick({
         subject: true,

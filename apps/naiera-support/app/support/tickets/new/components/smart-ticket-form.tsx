@@ -36,6 +36,7 @@ interface SmartTicketFormProps {
   onRequesterEmailChange: (value: string) => void
   onRequesterPhoneChange: (value: string) => void
   onFileUpload: (files: File[]) => void
+  attachmentsEnabled: boolean
   onBack: () => void
   onSubmit: () => void
   isSubmitting?: boolean
@@ -80,6 +81,7 @@ export function SmartTicketForm({
   onRequesterEmailChange,
   onRequesterPhoneChange,
   onFileUpload,
+  attachmentsEnabled,
   onBack,
   onSubmit,
   isSubmitting = false,
@@ -127,7 +129,7 @@ export function SmartTicketForm({
           <div className="mb-3 flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-primary" />
             <h3 className="font-semibold text-foreground">
-              Helpful Information to Include
+              Helpful Context to Include
             </h3>
           </div>
           <ul className="space-y-2">
@@ -170,7 +172,7 @@ export function SmartTicketForm({
               id="subject"
               value={subject}
               onChange={(e) => onSubjectChange(e.target.value)}
-              placeholder="Brief description of your issue or request"
+              placeholder="Brief initial context for your issue or request"
               className="h-11 rounded-2xl border-border/70 bg-background/80 pl-24 shadow-sm"
               required
               maxLength={200}
@@ -183,7 +185,7 @@ export function SmartTicketForm({
 
         {/* Template Fields */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Details</Label>
+          <Label className="text-sm font-medium">Initial Context</Label>
           <div className="rounded-2xl border border-border/50 bg-card/50 p-6">
             {ticketType === TicketType.BUG_REPORT && (
               <BugReportTemplate
@@ -314,31 +316,32 @@ export function SmartTicketForm({
           </div>
         </div>
 
-        {/* Attachments */}
-        <div className="space-y-2">
-          <Label htmlFor="attachments" className="text-sm font-medium">
-            Attachments{" "}
-            <span className="text-muted-foreground">(optional)</span>
-          </Label>
-          <div className="flex items-center gap-4">
-            <label htmlFor="attachments">
-              <div className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors hover:border-border">
-                <Upload className="h-4 w-4 text-muted-foreground" />
-                <span>Upload files</span>
-              </div>
-              <input
-                id="attachments"
-                type="file"
-                multiple
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </label>
-            <p className="text-sm text-muted-foreground">
-              Screenshots, logs, or documents (max 10MB each)
-            </p>
+        {attachmentsEnabled && (
+          <div className="space-y-2">
+            <Label htmlFor="attachments" className="text-sm font-medium">
+              Attachments{" "}
+              <span className="text-muted-foreground">(optional)</span>
+            </Label>
+            <div className="flex items-center gap-4">
+              <label htmlFor="attachments">
+                <div className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-border/70 bg-background/80 px-4 py-2 text-sm shadow-sm transition-colors hover:border-border">
+                  <Upload className="h-4 w-4 text-muted-foreground" />
+                  <span>Upload files</span>
+                </div>
+                <input
+                  id="attachments"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+              <p className="text-sm text-muted-foreground">
+                Screenshots, logs, or documents (max 10MB each)
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Submit */}
         <Button
