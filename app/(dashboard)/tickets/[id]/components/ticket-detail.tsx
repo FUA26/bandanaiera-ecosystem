@@ -214,6 +214,11 @@ export function TicketDetail({ ticketId, currentUserId }: Props) {
                 </h1>
                 <Badge variant="outline">{ticket.ticketNumber}</Badge>
                 <Badge variant="outline">{ticket.app.name}</Badge>
+                {ticket.sla && (
+                  <Badge className={slaColors[ticket.sla.status]}>
+                    {slaLabels[ticket.sla.status] || ticket.sla.status}
+                  </Badge>
+                )}
               </div>
               <p className="text-sm text-muted-foreground">
                 {ticket.channel.type} • Created{" "}

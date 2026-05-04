@@ -8,7 +8,7 @@
  * @pattern docs/patterns/activity-logs.md
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "../../prisma"
 import { Prisma } from "@prisma/client"
 import {
   CreateTicketInput,
@@ -21,14 +21,12 @@ import {
   TicketStatus,
   ActivityAction,
   WebhookEvent,
-  SenderType,
   Priority,
 } from "@prisma/client"
 import { triggerWebhook } from "./webhook-service"
 import {
   notifyAgentTicketCreated,
   notifyCustomerTicketUpdate,
-  notifyCustomerTicketCreated,
 } from "./notification-service"
 import { calculateSlaTargetAt, calculateTicketSla } from "./sla"
 
@@ -96,7 +94,7 @@ function formatTicketListItem(ticket: any): TicketWithRelations {
  * Create a new ticket
  *
  * Validates the app and channel, generates a ticket number,
- * creates the ticket with the initial message, and logs activity.
+ * creates the ticket from the intake payload, and logs activity.
  */
 export async function createTicket(data: CreateTicketInput): Promise<any> {
   const {
@@ -139,23 +137,25 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
   const createdAt = new Date()
   const ticketPriority = priority || Priority.NORMAL
 
-  // Build metadata object with ticket type and template fields
+  // Build metadata object with the structured initial intake context
   const ticketMetadata: Record<string, unknown> = {
     ...(metadata || {}),
   }
+  ticketMetadata.templateFields =
+    (metadata?.templateFields as Record<string, string> | undefined) || {}
+  ticketMetadata.initialContextVersion = 1
   if (ticketType) {
     ticketMetadata.ticketType = ticketType
-    ticketMetadata.templateFields = metadata?.templateFields || {}
   }
 
-  // Create ticket with initial message and activity
+  // Create ticket with the intake stored on the ticket record itself
   const ticket = await prisma.ticket.create({
     data: {
       ticketNumber,
       appId,
       channelId,
       subject,
-      description,
+      description: description ?? message,
       priority: ticketPriority,
       slaTargetAt: calculateSlaTargetAt(ticketPriority, createdAt),
       createdAt,
@@ -169,14 +169,25 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
         Object.keys(ticketMetadata).length > 0
           ? (ticketMetadata as unknown as Prisma.InputJsonValue)
           : undefined,
-      messages: {
-        create: {
-          sender: SenderType.CUSTOMER,
-          userId,
-          message,
-          attachments,
-        },
-      },
+      attachments:
+        attachments && attachments.length > 0
+          ? {
+              create: attachments.map((attachment) => {
+                const fileId = attachment.id || attachment.fileId
+                if (!fileId) {
+                  throw new Error("ATTACHMENT_FILE_ID_REQUIRED")
+                }
+
+                return {
+                  file: {
+                    connect: {
+                      id: fileId,
+                    },
+                  },
+                }
+              }),
+            }
+          : undefined,
       activities: {
         create: {
           action: ActivityAction.CREATED,
@@ -189,6 +200,11 @@ export async function createTicket(data: CreateTicketInput): Promise<any> {
       channel: true,
       user: true,
       messages: true,
+      attachments: {
+        include: {
+          file: true,
+        },
+      },
     },
   })
 

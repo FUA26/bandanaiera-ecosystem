@@ -42,6 +42,8 @@ export const senderTypeEnum = z.enum(["CUSTOMER", "AGENT", "SYSTEM"])
 // ============================================================================
 
 export const ticketAttachmentSchema = z.object({
+  id: z.string().min(1).optional(),
+  fileId: z.string().min(1).optional(),
   url: z.string().min(1, "Attachment URL is required"),
   name: z.string().max(255, "Attachment name must be less than 255 characters"),
   type: z.string().min(1, "Attachment type is required"),

@@ -72,6 +72,13 @@ const PRIORITY_OPTIONS: FacetedFilterOption[] = [
   { label: "Urgent", value: "URGENT" },
 ]
 
+const SLA_OPTIONS: FacetedFilterOption[] = [
+  { label: "On track", value: "ON_TRACK" },
+  { label: "Due soon", value: "DUE_SOON" },
+  { label: "Breached", value: "BREACHED" },
+  { label: "Met", value: "COMPLETED" },
+]
+
 const slaColors: Record<string, string> = {
   ON_TRACK:
     "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 hover:bg-emerald-500/15",
@@ -466,6 +473,11 @@ export function TicketsClient({ tickets }: TicketsClientProps) {
                       title="Priority"
                       options={PRIORITY_OPTIONS}
                       column={table.getColumn("priority")}
+                    />
+                    <DataTableFacetedFilter
+                      title="SLA"
+                      options={SLA_OPTIONS}
+                      column={table.getColumn("sla")}
                     />
                     <DataTableDateFilter
                       title="Created"

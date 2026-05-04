@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth/config"
+import { auth } from "@/lib/auth/edge-config"
 import { NextResponse } from "next/server"
 
 /**
@@ -13,9 +13,6 @@ import { NextResponse } from "next/server"
 
 // Manage routes - requires ADMIN role
 const MANAGE_ROUTES = ["/manage"]
-
-// Routes that require authentication (any role)
-const PROTECTED_ROUTES = ["/"]
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth
