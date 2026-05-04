@@ -1,5 +1,22 @@
 import { z } from "zod"
 
+const appTicketTypeSchema = z.object({
+  id: z
+    .string()
+    .min(1)
+    .max(50)
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Ticket type ID must contain only lowercase letters, numbers, and hyphens"
+    ),
+  label: z.string().min(1).max(100),
+  description: z.string().max(300).optional(),
+})
+
+const appTicketingConfigSchema = z.object({
+  ticketTypes: z.array(appTicketTypeSchema).min(1).optional(),
+})
+
 /**
  * App Validation Schemas
  */
@@ -16,6 +33,7 @@ export const createAppSchema = z.object({
     .optional(),
   description: z.string().max(500).nullable().optional(),
   isActive: z.boolean().optional(),
+  config: appTicketingConfigSchema.optional(),
 })
 
 export const updateAppSchema = z.object({
@@ -28,6 +46,7 @@ export const updateAppSchema = z.object({
     .optional(),
   description: z.string().max(500).nullable().optional(),
   isActive: z.boolean().optional(),
+  config: appTicketingConfigSchema.optional(),
 })
 
 /**

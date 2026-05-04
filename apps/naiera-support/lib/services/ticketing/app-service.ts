@@ -13,6 +13,7 @@ export interface CreateAppInput {
   slug: string
   description?: string | null
   isActive?: boolean
+  config?: Record<string, unknown>
 }
 
 export interface UpdateAppInput {
@@ -20,6 +21,7 @@ export interface UpdateAppInput {
   slug?: string
   description?: string | null
   isActive?: boolean
+  config?: Record<string, unknown>
 }
 
 export interface CreateChannelInput {
@@ -38,6 +40,7 @@ export interface UpdateChannelInput {
 }
 
 export interface AppWithChannels extends App {
+  config: Prisma.JsonValue
   channels: Channel[]
   _count: {
     tickets: number
@@ -203,6 +206,7 @@ export async function createApp(
       slug: data.slug,
       description: data.description,
       isActive: data.isActive ?? true,
+      ...(data.config !== undefined && { config: data.config as any }),
     },
   })
 
@@ -243,6 +247,7 @@ export async function updateApp(
       ...(data.slug !== undefined && { slug: data.slug }),
       ...(data.description !== undefined && { description: data.description }),
       ...(data.isActive !== undefined && { isActive: data.isActive }),
+      ...(data.config !== undefined && { config: data.config as any }),
     },
   })
 

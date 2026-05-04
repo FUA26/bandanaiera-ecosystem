@@ -455,6 +455,7 @@ model App {
   slug        String    @unique
   description String?   @db.Text
   isActive    Boolean   @default(true)
+  config      Json?
   channels    Channel[]
   tickets     Ticket[]
   webhooks    Webhook[]

@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
         slug,
         description: validated.description,
         isActive: validated.isActive,
+        config: validated.config,
       },
       session.user.id
     )

@@ -10,6 +10,7 @@ import type {
   AppDialogState,
   AppFormData,
   App,
+  AppTicketTypeOption,
   CreateAppPayload,
   UpdateAppPayload,
 } from "@/lib/types/apps"
@@ -27,6 +28,7 @@ type FormAction =
   | { type: "SET_SLUG"; slug: string }
   | { type: "SET_DESCRIPTION"; description: string }
   | { type: "SET_ACTIVE"; isActive: boolean }
+  | { type: "SET_TICKET_TYPES"; ticketTypes: AppTicketTypeOption[] }
   | { type: "RESET"; initialState: AppFormData }
 
 /** Initial form state */
@@ -35,6 +37,7 @@ const initialFormData: AppFormData = {
   slug: "",
   description: "",
   isActive: true,
+  ticketTypes: [],
 }
 
 /** Initial dialog state */
@@ -74,6 +77,8 @@ function formReducer(state: AppFormData, action: FormAction): AppFormData {
       return { ...state, description: action.description }
     case "SET_ACTIVE":
       return { ...state, isActive: action.isActive }
+    case "SET_TICKET_TYPES":
+      return { ...state, ticketTypes: action.ticketTypes }
     case "RESET":
       return action.initialState
     default:
@@ -100,6 +105,7 @@ export function useAppDialog() {
         slug: app.slug,
         description: app.description || "",
         isActive: app.isActive,
+        ticketTypes: app.config?.ticketTypes ?? [],
       },
     })
     dispatchDialog({ type: "OPEN_EDIT", app })
@@ -122,6 +128,7 @@ export function useAppDialog() {
       ...(formData.slug.trim() && { slug: formData.slug }),
       ...(formData.description.trim() && { description: formData.description }),
       isActive: formData.isActive,
+      config: { ticketTypes: formData.ticketTypes },
     }
   }, [formData])
 
@@ -137,6 +144,10 @@ export function useAppDialog() {
       ...(formData.isActive !== dialog.app?.isActive && {
         isActive: formData.isActive,
       }),
+      ...(JSON.stringify(formData.ticketTypes) !==
+        JSON.stringify(dialog.app?.config?.ticketTypes ?? []) && {
+        config: { ticketTypes: formData.ticketTypes },
+      }),
     }
   }, [formData, dialog.app])
 
@@ -144,6 +155,14 @@ export function useAppDialog() {
   const validate = useCallback((): string | null => {
     if (!formData.name.trim()) {
       return "App name is required"
+    }
+    if (formData.ticketTypes.length === 0) {
+      return "At least one ticket type is required"
+    }
+    if (
+      formData.ticketTypes.some((type) => !type.label.trim() || !type.id.trim())
+    ) {
+      return "Each ticket type must have an id and label"
     }
     return null
   }, [formData])

@@ -1,39 +1,21 @@
 "use client"
 
-import {
-  Bug,
-  Lightbulb,
-  UserCog,
-  Wrench,
-  CreditCard,
-  MessageCircle,
-  CheckCircle2,
-} from "lucide-react"
 import { motion } from "framer-motion"
+import { CheckCircle2, MessageCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { TicketType } from "@/lib/ticketing/ticket-types"
-import { getAllTicketTypeConfigs } from "@/lib/ticketing/form-templates"
-
-const iconMap = {
-  bug: Bug,
-  lightbulb: Lightbulb,
-  "user-cog": UserCog,
-  wrench: Wrench,
-  "credit-card": CreditCard,
-  "message-circle": MessageCircle,
-}
+import type { AppTicketTypeOption } from "@/lib/types/apps"
 
 interface TicketTypeSelectorProps {
-  selectedType: TicketType | null
-  onSelectType: (type: TicketType) => void
+  selectedType: string | null
+  availableTypes: AppTicketTypeOption[]
+  onSelectType: (typeId: string) => void
 }
 
 export function TicketTypeSelector({
   selectedType,
+  availableTypes,
   onSelectType,
 }: TicketTypeSelectorProps) {
-  const ticketTypes = getAllTicketTypeConfigs()
-
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -51,14 +33,8 @@ export function TicketTypeSelector({
         aria-label="Select ticket type"
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
       >
-        {ticketTypes.map((type, index) => {
-          const IconComponent = iconMap[type.icon as keyof typeof iconMap]
+        {availableTypes.map((type, index) => {
           const isSelected = selectedType === type.id
-
-          if (!IconComponent) {
-            console.warn(`Icon not found for ticket type: ${type.icon}`)
-            return null
-          }
 
           return (
             <motion.button
@@ -70,7 +46,7 @@ export function TicketTypeSelector({
               aria-describedby={`${type.id}-desc`}
               onClick={() => onSelectType(type.id)}
               className={cn(
-                "group relative flex flex-col items-start rounded-2xl border border-border/70 bg-card/95 p-5 text-left shadow-sm backdrop-blur transition-all duration-200",
+                "group relative flex min-h-44 flex-col items-start rounded-2xl border border-border/70 bg-card/95 p-5 text-left shadow-sm backdrop-blur transition-all duration-200",
                 "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none",
                 isSelected && "border-primary bg-primary/5"
               )}
@@ -92,37 +68,22 @@ export function TicketTypeSelector({
                 </motion.div>
               )}
 
-              <div
-                className={cn(
-                  "mb-3 flex h-12 w-12 items-center justify-center rounded-xl transition-colors",
-                  isSelected
-                    ? "bg-primary/20 text-primary"
-                    : "bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
-                )}
-              >
-                {IconComponent && <IconComponent className="h-6 w-6" />}
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">
+                <MessageCircle className="h-6 w-6" />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <h3 className="font-semibold text-foreground">{type.label}</h3>
                 <p
                   id={`${type.id}-desc`}
                   className="text-sm leading-relaxed text-muted-foreground"
                 >
-                  {type.description}
+                  {type.description?.trim() ||
+                    "Describe your issue and our team will help route it correctly."}
                 </p>
-                {type.examples && type.examples.length > 0 && (
-                  <ul className="mt-2 space-y-1">
-                    {type.examples.slice(0, 2).map((example, i) => (
-                      <li
-                        key={i}
-                        className="line-clamp-1 text-xs text-muted-foreground/70"
-                      >
-                        &quot;{example}&quot;
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <div className="pt-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  {type.id}
+                </div>
               </div>
             </motion.button>
           )
