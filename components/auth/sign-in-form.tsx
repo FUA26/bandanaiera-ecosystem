@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,7 +21,10 @@ import { signInSchema, type SignInInput } from "@/lib/auth-validation"
 
 export function SignInForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const errorId = React.useId()
+  const callbackUrl = searchParams.get("callbackUrl")
+  const fallbackUrl = "/tickets"
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -47,7 +50,7 @@ export function SignInForm() {
       } else {
         toast.success("Berhasil masuk")
         await new Promise((resolve) => setTimeout(resolve, 100))
-        router.push("/dashboard")
+        router.push(callbackUrl || fallbackUrl)
         router.refresh()
       }
     } catch {
