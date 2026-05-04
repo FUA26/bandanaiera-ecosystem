@@ -6,7 +6,7 @@
  * and the approval workflow for access requests.
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 
 // ============================================================================
 // Access Checking Functions

@@ -1,7 +1,7 @@
 /**
  * App-Branded Button Component
  *
- * Modern buttons with semantic tokens from the backoffice theme.
+ * Modern buttons with semantic tokens from the support dashboard theme.
  *
  */
 

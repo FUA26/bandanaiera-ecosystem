@@ -1,7 +1,7 @@
 /**
  * Page Title Configuration
  *
- * Centralized configuration for page titles across the backoffice
+ * Centralized configuration for page titles across the support dashboard
  */
 
 export interface PageTitleConfig {
@@ -114,7 +114,7 @@ export function getPageTitle(pathname: string): PageTitleConfig {
   // Default fallback
   return {
     title: "Dashboard",
-    description: "Bandanaiera Admin",
+    description: "Sonar Support",
   }
 }
 
@@ -123,5 +123,5 @@ export function getPageTitle(pathname: string): PageTitleConfig {
  */
 export function getFullPageTitle(pathname: string): string {
   const config = getPageTitle(pathname)
-  return `${config.title} | Bandanaiera Admin`
+  return `${config.title} | Sonar Support`
 }

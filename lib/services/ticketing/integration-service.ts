@@ -11,7 +11,7 @@
  * - exp: Expiration timestamp (default 30 minutes)
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { SignJWT, jwtVerify, decodeJwt } from "jose"
 
 const TOKEN_EXPIRY_MINUTES = 30

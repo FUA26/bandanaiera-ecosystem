@@ -12,12 +12,12 @@ export function Header() {
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
             <img
               src="/images/logo_bandanaiera.png"
-              alt="Bandanaiera logo"
+              alt="Sonar Support logo"
               className="h-7 w-7 object-contain"
             />
           </div>
           <span className="hidden font-bold sm:inline-block">
-            Bandanaiera Admin
+            Sonar Support
           </span>
         </Link>
 

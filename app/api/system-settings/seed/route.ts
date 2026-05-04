@@ -50,8 +50,9 @@ export const POST = protectApiRoute({
           requireEmailVerification: true,
           defaultUserRoleId: userRole.id,
           emailVerificationExpiryHours: 24,
-          siteName: "Bandanaiera Admin",
-          siteDescription: "A powerful platform for managing your content",
+          siteName: "Sonar Support",
+          siteDescription:
+            "Support operations platform for tickets, tasks, and customer communication",
           minPasswordLength: 8,
           requireStrongPassword: false,
         },

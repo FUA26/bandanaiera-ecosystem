@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { createTicket } from "@/lib/services/ticketing/ticket-service"
 import { integratedTicketSchema } from "@/lib/validations/ticket-validation"
 import { verifyAccessToken } from "@/lib/services/ticketing/integration-service"

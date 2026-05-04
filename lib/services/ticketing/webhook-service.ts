@@ -9,7 +9,7 @@
  * Supported events: TICKET_CREATED, TICKET_UPDATED, MESSAGE_ADDED, STATUS_CHANGED, ASSIGNED
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { WebhookEvent } from "@prisma/client"
 
 const MAX_ATTEMPTS = 3

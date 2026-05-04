@@ -4,7 +4,7 @@
  */
 
 import { requireAuth } from "@/lib/auth/permissions"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { TaskStatus, TaskPriority } from "@prisma/client"
 import { NextResponse } from "next/server"
 

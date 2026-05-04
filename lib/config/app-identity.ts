@@ -22,9 +22,9 @@ import { LifeBuoy } from "lucide-react"
 
 export const appIdentity = {
   // App Identification
-  name: "Bandanaiera Admin",
-  fullName: "Bandanaiera Admin Support System",
-  shortName: "Bandanaiera",
+  name: "Sonar Support",
+  fullName: "Sonar Support",
+  shortName: "Sonar",
   tagline: "Modern support operations for teams",
 
   // Visual Identity

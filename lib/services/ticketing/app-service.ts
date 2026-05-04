@@ -4,7 +4,7 @@
  * Handles CRUD operations for Apps and Channels in the ticketing system.
  */
 
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 import type { App, Channel, ChannelType, Prisma } from "@prisma/client"
 
 // Types

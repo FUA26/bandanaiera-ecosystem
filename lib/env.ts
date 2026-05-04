@@ -12,7 +12,7 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://172.16.25.161:3200"),
-  NEXT_PUBLIC_APP_NAME: z.string().default("Bandanaiera Admin"),
+  NEXT_PUBLIC_APP_NAME: z.string().default("Sonar Support"),
 
   // Database
   DATABASE_URL: z.string().url(),

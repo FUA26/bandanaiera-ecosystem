@@ -57,7 +57,7 @@ async function seedSystemSettings() {
         requireEmailVerification: true,
         defaultUserRoleId: userRole.id,
         emailVerificationExpiryHours: 24,
-        siteName: "Bandanaiera Admin",
+        siteName: "Sonar Support",
         siteDescription: "A powerful platform for managing your content",
         minPasswordLength: 8,
         requireStrongPassword: false,
@@ -66,7 +66,7 @@ async function seedSystemSettings() {
         citizenName: "Warga",
         versionNumber: "1.0.0",
         // Footer
-        copyrightText: `© ${new Date().getFullYear()} Bandanaiera Admin. All rights reserved.`,
+        copyrightText: `© ${new Date().getFullYear()} Sonar Support. All rights reserved.`,
       },
     })
 

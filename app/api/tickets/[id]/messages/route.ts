@@ -20,7 +20,7 @@ import {
   getTicketMessages,
 } from "@/lib/services/ticketing/ticket-message-service"
 import { SenderType } from "@prisma/client"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db/prisma"
 
 type Params = Promise<{ id: string }>
 

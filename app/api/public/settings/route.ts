@@ -42,16 +42,16 @@ export const GET = async (req: Request) => {
     }
 
     // Build response with logo URL (use public serve URL instead of direct CDN URL)
-    // Use full URL so landing app can access the file through backoffice
-    const backofficeUrl =
+    // Use full URL so external/public consumers can access the file through this app
+    const appBaseUrl =
       env.NEXT_PUBLIC_APP_URL ||
-      `${req.headers.get("host") ? `${req.headers.get("x-forwarded-proto") || "http"}://${req.headers.get("host")}` : "http://localhost:3001"}`
+      `${req.headers.get("host") ? `${req.headers.get("x-forwarded-proto") || "http"}://${req.headers.get("host")}` : "http://localhost:3200"}`
     const response = {
       siteName: settings.siteName,
       siteSubtitle: settings.siteSubtitle || null,
       siteDescription: settings.siteDescription,
       siteLogoUrl: settings.siteLogoId
-        ? `${backofficeUrl}/api/public/files/${settings.siteLogoId}/serve`
+        ? `${appBaseUrl}/api/public/files/${settings.siteLogoId}/serve`
         : null,
       citizenName: settings.citizenName || "Warga",
       contactAddress: settings.contactAddress || null,
@@ -64,7 +64,7 @@ export const GET = async (req: Request) => {
       copyrightText: settings.copyrightText || null,
       versionNumber: settings.versionNumber || "1.0.0",
       heroBackgroundUrl: settings.heroBackgroundId
-        ? `${backofficeUrl}/api/public/files/${settings.heroBackgroundId}/serve`
+        ? `${appBaseUrl}/api/public/files/${settings.heroBackgroundId}/serve`
         : null,
     }
 
