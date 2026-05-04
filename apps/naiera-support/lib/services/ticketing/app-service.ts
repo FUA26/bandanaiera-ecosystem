@@ -200,14 +200,28 @@ export async function createApp(
     throw new Error(`App with slug "${data.slug}" already exists`)
   }
 
-  const app = await prisma.app.create({
-    data: {
-      name: data.name,
-      slug: data.slug,
-      description: data.description,
-      isActive: data.isActive ?? true,
-      ...(data.config !== undefined && { config: data.config as any }),
-    },
+  const app = await prisma.$transaction(async (tx) => {
+    const createdApp = await tx.app.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        isActive: data.isActive ?? true,
+        ...(data.config !== undefined && { config: data.config as any }),
+      },
+    })
+
+    await tx.channel.create({
+      data: {
+        appId: createdApp.id,
+        name: "Website Form",
+        type: "WEB_FORM",
+        config: {},
+        isActive: true,
+      },
+    })
+
+    return createdApp
   })
 
   return app

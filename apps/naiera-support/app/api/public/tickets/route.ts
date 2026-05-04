@@ -105,7 +105,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "INVALID_APP",
-          message: "Invalid or inactive app/channel",
+          message:
+            "This support form is not active yet for the selected app. Please enable the Website Form channel first.",
         },
         { status: 400 }
       )
