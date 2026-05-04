@@ -6,12 +6,11 @@
  */
 
 import { Metadata } from "next"
-import { redirect } from "next/navigation"
 
 interface VerifyEmailPageProps {
-  searchParams: {
+  searchParams: Promise<{
     token?: string
-  }
+  }>
 }
 
 export const metadata: Metadata = {
@@ -42,7 +41,7 @@ async function verifyToken(token: string) {
 export default async function VerifyEmailPage({
   searchParams,
 }: VerifyEmailPageProps) {
-  const token = searchParams.token
+  const { token } = await searchParams
 
   // If no token provided, show error
   if (!token) {
@@ -132,11 +131,6 @@ export default async function VerifyEmailPage({
 
   // Success
   if (result.success) {
-    // Auto-redirect to sign in after 3 seconds
-    setTimeout(() => {
-      redirect("/sign-in?verified=true")
-    }, 3000)
-
     return (
       <div className="flex flex-col items-center justify-center space-y-4 p-8">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 dark:bg-green-500/20">
