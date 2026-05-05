@@ -1,6 +1,6 @@
-import { AlertCircle, Clock, XCircle, RefreshCw } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+import { AlertCircle, Clock, XCircle } from "lucide-react"
 import { Card, CardContent } from "@workspace/ui/components/card"
+import { WindowActionButton } from "@/components/client-window-actions"
 
 interface PageProps {
   searchParams: Promise<{ error?: string }>
@@ -111,18 +111,18 @@ export default async function SupportErrorPage({ searchParams }: PageProps) {
 
             {/* Action button */}
             {config.action === "retry" ? (
-              <Button
-                onClick={() => window.location.reload()}
+              <WindowActionButton
+                action="reload"
                 variant="outline"
                 className="w-full gap-2"
+                showReloadIcon
               >
-                <RefreshCw className="h-4 w-4" />
                 Coba Lagi
-              </Button>
+              </WindowActionButton>
             ) : (
-              <Button onClick={() => window.close()} className="w-full">
+              <WindowActionButton action="close" className="w-full">
                 Tutup Halaman
-              </Button>
+              </WindowActionButton>
             )}
 
             {/* Footer note */}
