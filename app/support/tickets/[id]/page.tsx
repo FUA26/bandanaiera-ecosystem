@@ -1,8 +1,8 @@
 import { Suspense } from "react"
 import { TicketDetailPublic } from "./components/ticket-detail-public"
-import { Loader2, AlertCircle, Clock } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+import { Loader2, AlertCircle } from "lucide-react"
 import { Card, CardContent } from "@workspace/ui/components/card"
+import { WindowActionButton } from "@/components/client-window-actions"
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -41,13 +41,13 @@ export default async function PublicTicketDetailPage(props: PageProps) {
                 </ol>
               </div>
 
-              <Button
-                onClick={() => window.close()}
+              <WindowActionButton
+                action="close"
                 variant="outline"
                 className="w-full"
               >
                 Tutup Halaman
-              </Button>
+              </WindowActionButton>
 
               <p className="text-xs text-muted-foreground">
                 Jika Anda yakin seharusnya memiliki akses, silakan hubungi tim
